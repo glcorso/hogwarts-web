@@ -1,0 +1,273 @@
+{% extends 'baseImprimir.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        @media print and (orientation: portrait) {
+            /* landscape styles */
+        }
+        @page { margin: 0; }
+        body { margin: 1cm; }
+    </style>
+    <style type="text/css">
+        table { page-break-inside:auto }
+        thead { display:table-row-group }
+        tfoot { display:table-footer-group }
+        .pagebreak { page-break-before: always; } 
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+   
+{% endblock %}
+
+{% block title %}Portal Resfri Ar | Powered By Lidere Sistemas{% endblock %}
+
+{% block content %}
+
+        {% for registro in data.registro %}
+
+        {#<pre>
+        {{dump(registro)}}#}
+        <div class="pagebreak">
+            <div class="col-lg-12">
+                <div class="row" style="margin-top:50px;">
+                    <div class="col-md-12">
+                        <div class="text-center">
+                            <h4><strong class="text-center">Relatório de Visitas #{{registro.nro}}</strong></h4>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-3">
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-6">  
+                        <div class="form-group">
+                            <strong><p>Vendedor</p></strong>
+                            <p style="background-color:#d8d8d8;">{{registro.vendedor}}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">  
+                        <div class="form-group">
+                            <strong><p>Data</p></strong>
+                            <p style="background-color:#d8d8d8;">{{registro.criado_em|date('d/m/Y H:i:s')}}</p>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-3">
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-6">  
+                        <div class="form-group">
+                            <strong><p>Cliente</p></strong>
+                            <p style="background-color:#d8d8d8;">{{registro.descricao_cliente}}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">  
+                        <div class="form-group">
+                            <strong><p>Contato Dia da Visita</p></strong>
+                            <p style="background-color:#d8d8d8;">{% if registro.contato_prospect == null %}{{registro.contato_cliente}} {% else %}{{registro.contato_prospect}} {% endif %}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">  
+                         <div class="form-group">
+                            <strong><p>Telefone</p></strong> 
+                            <p style="background-color:#d8d8d8;">{% if registro.telefone_prospect == null %}{{registro.telefone_cliente}} {% else %}{{registro.telefone_prospect}} {% endif %}</p> 
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Motivo</p></strong>
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-3 ">
+                        <div class="form-group">
+                            <p style="background-color:#d8d8d8;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" disabled="disabled" class="custom-control-input" name="check_motivo_at" value="S" {% if registro.check_motivo_at is defined and registro.check_motivo_at == 'S' %} checked="checked" {% endif %} id="check-assistencia">
+                                <label class="custom-control-label" for="check-assistencia">Assistência Técnica</label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="form-group">
+                            <p style="background-color:#d8d8d8;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" disabled="disabled" class="custom-control-input" name="check_motivo_trei" value="S" {% if registro.check_motivo_trei is defined and registro.check_motivo_trei == 'S' %} checked="checked" {% endif %} id="check-treinamentos">
+                                <label class="custom-control-label" for="check-treinamentos">Treinamentos</label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="form-group">
+                            <p style="background-color:#d8d8d8;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" disabled="disabled" class="custom-control-input" name="check_motivo_com" value="S" {% if registro.check_motivo_com is defined and registro.check_motivo_com == 'S' %}checked="checked" {% endif %}  id="check-comercial">
+                                <label class="custom-control-label" for="check-comercial">Comercial</label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="form-group">
+                            <p style="background-color:#d8d8d8;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" disabled="disabled" class="custom-control-input" name="check_motivo_out"  value="S" {% if registro.check_motivo_out is defined and registro.check_motivo_out == 'S' %}checked="checked" {% endif %} id="check-outros">
+                                <label class="custom-control-label" for="check-outros">Outros</label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 ">
+                    </div>
+                </div>
+                <hr class="mb-3">
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <strong><p>Sede</p></strong>
+                            <p style="background-color:#d8d8d8;">{% if registro.ra_sede == 'P' %}Própria{% else %}Alugada{% endif %}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <strong><p>Estrutura</p></strong>
+                            <p style="background-color:#d8d8d8;">{% if registro.ra_estrutura == 'E' %} Excelente {% elseif registro.ra_estrutura == 'G'  %}Grande 
+                                {% elseif registro.ra_estrutura == 'M'  %}Média 
+                                {% elseif registro.ra_estrutura == 'P'  %}Pequena
+                            {% endif %}</p>
+                        </div>
+                    </div>
+                     <div class="col-md-4">
+                        <div class="form-group">
+                            <strong><p>Estoque Geral</p></strong>
+                            <p style="background-color:#d8d8d8;">{% if registro.ra_estoque_geral == 'E' %} Excelente {% elseif registro.ra_estoque_geral == 'G'  %}Grande 
+                                {% elseif registro.ra_estoque_geral == 'M'  %}Médio
+                                {% elseif registro.ra_estoque_geral == 'P'  %}Pequeno
+                            {% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Climatizadores</p></strong>
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" disabled="disabled" class="custom-control-input" name="check_climatizador" value="S" {% if registro.check_climatizador is defined and registro.check_climatizador == 'S' %} checked="checked" {% endif %} id="check-clima-resfriar">
+                            <label class="custom-control-label" for="check-clima-resfriar">Resfri Ar</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" disabled="disabled" class="custom-control-input" name="check_clima_conc" value="S" {% if registro.check_clima_conc is defined and registro.check_clima_conc == 'S' %} checked="checked" {% endif %}  id="check-clima-outros">
+                            <label class="custom-control-label" for="check-clima-outros"> Outros</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {% set clima_concorrentes = [] %}
+                        {% if registro.clima_concorrentes is defined %}
+                            {% for conc in registro.clima_concorrentes %}
+                                {% set clima_concorrentes = clima_concorrentes|merge([conc.Concorrente.descricao]) %}
+                            {% endfor %}
+                            <p style="background-color:#d8d8d8;">{{ clima_concorrentes|join(', ') }} </p>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Rodoar</p></strong>
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" disabled="disabled" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_rodoar" value="S" {% if registro.check_rodoar is defined and registro.check_rodoar == 'S' %} checked="checked" {% endif %} id="check-rodoar-resfriar">
+                            <label class="custom-control-label" for="check-rodoar-resfriar">Resfri Ar</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" disabled="disabled" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_rodo_conc" value="S" {% if registro.check_rodo_conc is defined and registro.check_rodo_conc == 'S' %} checked="checked" {% endif %} id="check-rodoar-outros">
+                            <label class="custom-control-label" for="check-rodoar-outros">Outros</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {% set rodoar_concorrentes = [] %}
+                        {% if registro.rodoar_concorrentes is defined %}
+                            {% for conc in registro.rodoar_concorrentes %}
+                                {% set rodoar_concorrentes = rodoar_concorrentes|merge([conc.Concorrente.descricao]) %}
+                            {% endfor %}
+                            <p style="background-color:#d8d8d8;">{{ rodoar_concorrentes|join(', ') }} </p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Geladeiras</p></strong>
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" disabled="disabled" name="check_geladeira" value="S" class="custom-control-input" {% if registro.check_geladeira is defined and registro.check_geladeira == 'S' %} checked="checked" {% endif %} id="check-geladeiras-resfriar">
+                            <label class="custom-control-label" for="check-geladeiras-resfriar">Resfri Ar</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" disabled="disabled" name="check_gela_conc" value="S" {% if registro.check_gela_conc is defined and registro.check_gela_conc == 'S' %} checked="checked" {% endif %}class="custom-control-input" id="check-geladeiras-outros">
+                            <label class="custom-control-label" for="check-geladeiras-outros">Outros</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {% set geladeira_concorrentes = [] %}
+                        {% if registro.geladeira_concorrentes is defined %}
+                            {% for conc in registro.geladeira_concorrentes %}
+                                {% set geladeira_concorrentes = geladeira_concorrentes|merge([conc.Concorrente.descricao]) %}
+                            {% endfor %}
+                            <p style="background-color:#d8d8d8;">{{ geladeira_concorrentes|join(', ') }} </p>
+                        {% endif %}
+                    </div>
+                </div>
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Material Publicitário</p></strong>
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-4 mb-3">
+                        <label>Folder Quantidade</label>
+                        <p style="background-color:#d8d8d8;">{{registro.folder_qtde}}</p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label>Catálogo Quantidade</label> 
+                        <p style="background-color:#d8d8d8;">{{registro.catalogo_qtde}}</p>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label>Banner Quantidade</label>
+                        <p style="background-color:#d8d8d8;">{{registro.banner_qtde}}</p>
+                    </div>
+                </div>
+
+                   
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Observações Vendedor</p></strong>
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-12">
+                        <p style="background-color:#d8d8d8;">{{registro.obs_vendedor}}</p>
+                    </div>
+                </div> 
+
+                {% if data.setor == 'pos_vendas' or data.setor == 'admin' %}
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Observações Pós Venda</p></strong>
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-12">
+                       <p style="background-color:#d8d8d8;">{{registro.obs_pos_venda}}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+        {% endfor %}
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+{% endblock %}

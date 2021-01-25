@@ -1,0 +1,10 @@
+<div class="row page-titles">
+	<div class="col-md-5 col-8 align-self-center">
+		<ol class="breadcrumb">
+			{% if data.modulo.nome_pai != null %}
+	        	<li class="breadcrumb-item"><a href="/{{data.modulo.url}}">{{data.modulo.nome_pai}}</a></li>
+	    	{% endif %}
+	        <li class="breadcrumb-item active">{{data.modulo.nome}}</li>
+	    </ol>
+	</div>
+</div>

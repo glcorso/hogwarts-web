@@ -1,0 +1,140 @@
+{% extends 'baseImprimir.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        @media print and (orientation: landscape) {
+            /* landscape styles */
+        }
+        @page { margin: 2cm; }
+        body { margin: 1cm; }
+    </style>
+    <style type="text/css">
+        table { page-break-inside:auto }
+        thead { display:table-row-group }
+        tfoot { display:table-footer-group }
+    </style>
+
+    <style>
+        table {
+            border-collapse: collapse;
+            margin-top: 5px;
+            font-size: 10px;
+        }
+        th {
+            border: 2px solid black;
+        }
+
+        label {
+            display:block;
+            font-weight: bold;
+            font-size: 12px;
+            margin-left: 2px;
+        }
+
+        font {
+            margin-left: 2px;
+        }
+
+        .nao-quebrar {
+            page-break-inside: avoid;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+   
+{% endblock %}
+
+{% block title %}Portal Resfri Ar | Powered By Lidere Sistemas{% endblock %}
+
+{% block content %}
+        
+    <div id="page-wrapper">
+        <table class="table table-bordered" > 
+            <thead>
+                <tr>
+                    <th width="10%"><span class="inline"><img src="/images/{{empresa.diretorio}}/logo-login.png" width="200"></span></th>
+                    <th width="70%" class="text-center" style="font-size:25px;"><b>Percentual de Custo por Item Filho </b></th>
+                    <th width="20%" class="text-right">
+                         <strong  style="font-size:10px;"> Parâmetros do Relatório: </strong><br>
+                        Data Impressão: {{ "now"|date("d/m/Y h:m:s") }}<br>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    {% if data.item_filtrado.mascara_id is not null %}
+                        <th>Máscara</th>
+                    {% endif %}
+                    {% if data.item_filtrado.pn is not null %}
+                        <th>PN</th>
+                    {% endif %}
+                    <th>Custo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>{{data.item_filtrado.codigo}} - {{data.item_filtrado.desc_tecnica}}</td>
+                    {% if data.item_filtrado.mascara_id is not null %}
+                        <td>{{data.item_filtrado.mascara_id}}</td>
+                    {% endif %}
+                    {% if data.item_filtrado.pn is not null %}
+                        <td>{{data.item_filtrado.pn}}</td>
+                    {% endif %}
+                    <td>{{data.custo_item_pai.custo|number_format(4, ',', '.')}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+       
+       {% if data.item_filtrado.cod_cli is not null %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>{{data.item_filtrado.cod_cli}} - {{data.item_filtrado.desc_cli}}</td></tr>
+            </tbody>
+        </table>
+        {% endif %}
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Descrição</th>
+                    <th>NCM</th>
+                    <th>Origem</th>
+                    <th>%</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estrutura in data.estrutura %}
+                    <tr>
+                        <td>{{estrutura.cod_item}}</td>
+                        <td>{{estrutura.desc_tecnica}}</td>
+                        <td>{{estrutura.ncm}}</td>
+                        <td>{{estrutura.origem}}</td>
+                        <td>{{estrutura.custo_mat}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+
+    <script type="text/javascript">
+        $(document).ready(function () { window.print(); });
+    </script>
+{% endblock %}

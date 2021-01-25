@@ -1,0 +1,104 @@
+{% extends 'baseLogged.html.twig' %}
+{% set pageName = 'Ranking de Clientes' %}
+
+{% block main %}
+
+    <div id="page-wrapper">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="page-header">
+                    {{pageName}}
+                </h2>
+
+                <ol class="breadcrumb">
+                    <li><a href="/home"><i class="fa fa-home"></i> Início</a></li>
+                    <li class="active"><i class="fa fa-file-text"></i> {{pageName}}</li>
+                </ol>
+
+                <div id="filter-panel" class="filter-panel">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <form action="/companies/ranking" method="get" class="form-inline" role="form">
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Período
+                                        <small>
+                                            <a href="javascript:void(0);" class="btn-clean-period" style="font-weight: normal">(limpar período)</a>
+                                        </small>
+                                    </label>
+                                    <input name="date_start" type="text" class="form-control input-sm date-format" value="{% if data.search.date_start is defined %}{{data.search.date_start}}{% endif %}" style="width: 90px">
+                                    a
+                                    <input name="date_end" type="text" class="form-control input-sm date-format" value="{% if data.search.date_end is defined %}{{data.search.date_end}}{% endif %}" style="width: 90px">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Cliente</label>
+                                    <select name="company_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for company in data.companies %}
+                                            <option value="{{company.id}}" {% if data.search.company_id is defined and data.search.company_id == company.id %} selected="selected" {% endif %}>{{company.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="checkbox" name="only_company_with_billing" class="m-top-30" value="true" {% if data.search.only_company_with_billing is not defined or data.search.only_company_with_billing == 'true' %} checked="true" {% endif %}>Apenas clientes com faturamento<br>
+                                    <input type="hidden" name="only_company_with_billing" value="false" {% if data.search.only_company_with_billing is not defined or data.search.only_company_with_billing == 'true' %}disabled="disabled" {% endif %}>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="filter-col" style="height:20px;"></label>
+                                    <input type="submit" class="btn btn-primary" value="Filtrar">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>
+                                    <strong>Ranking de Clientes </strong>
+                                </h4>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-hover table-striped" name="ranking-cliente">
+                                    <thead>
+                                    <tr>
+                                        <th width="100">Ranking</th>
+                                        <th>Nome do Cliente</th>
+                                        <th style="text-align: right">Total Faturado</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for accumulatedValue in data.accumulatedValue %}
+                                        <tr>
+                                            <td>{{accumulatedValue.ranking}}</td>
+                                            <td>{{accumulatedValue.nome}}</td>
+                                            <td style="text-align: right">R$ {{accumulatedValue.total|number_format(2, ',', '.')}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <td colspan="2"><strong>Total Faturado:</strong></td>
+                                        <td style="text-align: right"><strong>R$ {{data.total|number_format(2, ',', '.')}}</strong></td>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script src="/libs/jquery-mask-plugin/dist/jquery.mask.min.js" type="text/javascript"></script>
+    <script src="/javascripts/ranking_clientes.js" type="text/javascript"></script>
+{% endblock %}

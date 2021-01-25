@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string",
+      "required": true
+    },
+    "serie_id": {
+      "type": "integer",
+      "required": true
+    }, 
+    "dt_teste": {
+      "type": "string",
+      "required": true
+    },
+    "operador": {
+      "type": "string",
+      "required": true
+    },
+    "obs_iniciais": {
+      "type": ["string", "null"],
+      "required": true 
+    },
+    "dt_fim": {
+      "type": ["string", "null"],
+      "required": true 
+    },
+    "informacoes": {
+      "type": "array",
+      "minInf": 1,
+      "informacao": {
+        "type": "object",
+        "properties": {
+          "t1": {
+            "type": "integer",
+            "required": true,
+          },
+          "t2": {
+            "type": "integer",
+            "required": true,
+          },
+          "t3": {
+            "type": "integer",
+            "required": true
+          },
+          "t4": {
+            "type": "integer",
+            "required": true
+          },
+          "a": {
+            "type": "integer",
+            "required": true
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,596 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if permissao.permissao > 1 %}/ti/tickets/form {% else  %} javascript:void(0); {% endif  %}" method="post" role="form" class="main-form" enctype="multipart/form-data">
+
+    <div class="card card-outline-info">
+        <div class="card-header">
+            <h4 class="m-b-0 text-white">Chamado</h4>
+        </div>
+        <div class="card-body">
+            {% if ticket.id is defined %}
+                <input type="hidden" name="id" value="{{ticket.id}}">
+            {% endif %}
+
+            <div class="row">
+                {% if ticket.id is defined %}
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Status*</label>
+                            <select name="status_id" class="form-control" data-myrules="required">
+                                {% for stat in status %}
+                                    <option value="{{stat.id}}" {% if ticket.last_status.id == stat.id %} selected="selected" {% endif %}>{{stat.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Consultor Responsável*</label>
+                            <select name="user_internal_id" class="form-control" data-myrules="required">
+                                <option></option>
+                                {% for adm in admin_users %}
+                                    <option value="{{adm.id}}" {% if ticket.user_internal_id == adm.id %} selected="selected" {% endif %}>
+                                        {{adm.name}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Data*</label>
+                            <input type="text" name="created_at" class="form-control" placeholder="Informe a data" value="{% if ticket.id is defined %} {{ticket.created_at|date("d/m/Y")}} {% else %} {{"now"|date("d/m/Y")}} {% endif %}" data-myrules="required">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Consultor Responsável*</label>
+                            <select name="user_internal_id" class="form-control" data-myrules="required">
+                                <option></option>
+                                {% for adm in admin_users %}
+                                    <option value="{{adm.id}}" {% if ticket.user_internal_id == adm.id %} selected="selected" {% endif %}>{{adm.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="row">
+
+                <div class="col-lg-6">
+
+                    <div class="form-group">
+                        <label>Projeto/Produto*</label>
+                        <select name="project_id" class="form-control" data-myrules="required">
+                            <option></option>
+                            {% for company in companies %}
+                                <option value="{{company.id}}" disabled="true">{{company.name}}</option>
+                                {% if company.projects|length > 0 %}
+                                    {% for project in company.projects %}
+                                        <option value="{{project.id}}" {% if ticket.project_id is defined and ticket.project_id == project.id %} selected="selected" {% endif %}>{{company.name}} &nbsp;&rarr; {{project.name}}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Título*</label>
+                        <input type="text" name="title" class="form-control" placeholder="Informe o título" value="{% if ticket.title is defined %}{{ticket.title}}{% endif %}" data-myrules="required">
+                    </div>
+
+                        <div class="form-group">
+                        <label>Categoria*</label>
+                        <select name="category" class="form-control" data-myrules="required">
+                            <option value=""></option>
+                                <option value="C" {% if ticket is defined and ticket.category == 'C' %} selected="selected" {% endif %}>Consultoria</option>
+                                <option value="D" {% if ticket is defined and ticket.category == 'D' %} selected="selected" {% endif %}>Desenvolvimento</option>
+                                <option value="S" {% if ticket is defined and ticket.category == 'S' %} selected="selected" {% endif %}>Suporte</option>
+                        </select>
+                    </div>
+
+
+                    {% if ticket.id is defined %}
+                        <div class="form-group">
+                            <label>Solicitante</label>
+                            <input type="text" class="form-control" disabled="disabled" value="{{ticket.user_name}}">
+                        </div>
+                    {% else %}
+                        {% if is_admin == 'ON' %}
+                            <div class="form-group">
+                                <label>Solicitante</label>
+                                <select name="user_id" class="form-control user-id"></select>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+
+                </div>
+
+                <div class="col-lg-6">
+
+                    <div class="form-group">
+                        <label>Tipo*</label>
+                        <select name="type_id" class="form-control" data-myrules="required">
+                            <option value=""></option>
+                            {% for type in types %}
+                                <option value="{{type.id}}" {% if ticket is defined and ticket.type_id == type.id %} selected="selected" {% endif %}>{{type.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Prioridade*</label>
+                        <select name="priority_id" class="form-control" data-myrules="required">
+                            <option value=""></option>
+                            {% for priority in priorities %}
+                                <option value="{{priority.id}}" {% if ticket is defined and ticket.priority_id == priority.id %} selected="selected" {% endif %}>{{priority.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {% if is_admin == 'ON' %}
+                        <div class="form-group">
+                            <label>Detalhes Financeiros</label>
+                            <input type="text" name="financial_details" class="form-control" placeholder="Informe os detalhes financeiros" value="{% if ticket.financial_details is defined %}{{ticket.financial_details}}{% endif %}">
+                        </div>
+                    {% endif %}
+
+                    {% if is_admin == 'ON' %}
+                        <div class="form-group">
+                            <label>Pontuação{% if ticket.id is defined %}*{% endif %}</label>
+                            <select name="punctuation" class="form-control" {% if ticket.id is defined %} data-myrules="required" {% endif %}>
+                                <option value=""></option>
+                                {% for i in range (1, 10) %}
+                                    <option value="{{i}}" {% if ticket is defined and ticket.punctuation == i %} selected="selected" {% endif %}>{{i}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <label>Descrição*</label>
+                        <textarea id="description" name="description" class="form-control redactor-ticket" style="height: 200px; resize: none;">{{ticket.description|raw}}</textarea>
+                        <p class="help-block">Pressione o Shift + Enter para linhas sem espaçamento.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+		    {% if ticket.id is not defined and permissao.permissao > 1 or ticket.user_id == usuario_logado.id or is_admin == 'ON' %}
+                    	<button type="submit" class="btn btn-default btn-success margin-r-15" {% if ticket.billed == 'ON' %} disabled="disabled" {% endif %}><i class="fa fa-check"></i> {% if ticket.id is defined %} Editar {% else %} Adicionar {% endif %}</button> 
+		    {% endif  %}
+                    <a href="/ti/tickets" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+    {% if ticket.id is defined %}
+        <div class="card " style="margin-top:-10px;">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>Arquivos</h3>
+                    <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th width="530">Descrição</th>
+                            <th width="350">Arquivo</th>
+                            <th width="150">Data</th>
+                            <th>Tamanho</th>
+                            <th width="80"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in files %}
+                            <tr>
+                                <td>{{file.description}}</td>
+                                <td>{{file.name}}</td>
+                                <td>{{file.created_at_br}}</td>
+                                <td>{{file.size}}</td>
+                                <td align="right">
+                                    <a href="/ti/tickets/download/{{file.link}}" target="_blank" class="" title="Download"><i class="fa fa-download text-inverse m-r-10 m-l-10"></i></a>
+                                    {% if file.can_delete %}
+                                        <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-ticket-id="{{file.ticket_id}}" data-name="{{file.name}}" title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="5" align="center">Nenhum arquivo.</tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="4"></td>
+                            <td align="right">
+                                {% if ticket.add_file == true and ticket.last_status.id != 6 %}
+                                    <a href="javascript:void(0);" data-ticket-id="{{ticket.id}}" class="btn btn-success btn-xs btn-add-file" title="Adicionar Arquivo"><i class="fa fa-plus"></i> Adicionar</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>Atendimentos</h3>
+                    <form action="/ti/tickets/print/{{ticket.id}}" method="post" class="form-print" target="_blank">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th width="90">Data</th>
+                                    <th width="60">Início</th>
+                                    <th width="60">Fim</th>
+                                    <th width="150">Consultor</th>
+                                    <th width="160">Tipo</th>
+                                    <th>Descrição</th>
+                                    <th width="150">Status</th>
+                                    <th width="120" class="text-right">
+                                        <a style="display:none" href="javascript:void(0);" class="btn btn-primary btn-xs btn-print-calleds" title="Imprimir Atendimentos Selecionados"><i class="fa fa-print"></i> Imprimir</a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in calleds %}
+                                    <tr {% if row.add_to_billing_report == 'OFF' %} class="yellow" {% endif %} >
+                                        <td>{{row.date}}</td>
+                                        <td>{{row.hour_start}}</td>
+                                        <td>{{row.hour_finish}}</td>
+                                        <td>{{row.user_name}}</td>
+                                        <td>{{row.hour_name}}</td>
+                                        <td>{{row.description|raw}} {% if row.closed_value == 'ON' %} <br>Valor Fechado: R$ {{row.hour_value}} {% endif %}</td>
+                                        <td><small>{% if row.status == 'EM_ATENDIMENTO' %} Em Atendimento {% elseif row.status == 'CONCLUIDO' %} Concluído {% else %} Faturado em {{row.billed_at|date('d/m/Y')}} {% if row.num_nf != null %} Nro. NF: {{row.num_nf}} {% endif %} {% endif %}</small></td>
+                                        <td align="right">
+                                            <input type="checkbox" name="calleds[]" value="{{row.id}}" title="Clique para Imprimir" class="chk-print-item">
+                                            {% if row.status != 'FATURADO' %}
+                                                <a href="javascript:void(0);" class="btn-edit-modal" data-ticket-id="{{row.ticket_id}}" data-id="{{row.id}}" data-date="{{row.date}}" data-hour-start="{{row.hour_start}}" data-hour-finish="{{row.hour_finish}}" data-description="{{row.description|raw|e}}" data-hour-id="{{row.hour_id}}" data-closed-value="{{row.closed_value}}" data-hour-value="{{row.hour_value}}" data-status="{{row.status}}" data-user-id="{{row.user_id}}" data-add-to-billing-report="{{row.add_to_billing_report}}" data-billing="{{row.billing}}" data-goal="{{row.goal}}" title="Editar"><i class="fa fa-pencil text-inverse m-r-10 m-l-10"></i></a>
+                                            {% endif %}
+                                            {% if row.can_delete %}
+                                                <a href="javascript:void(0);" class="btn-delete-modal" data-id="{{row.id}}" title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="8" align="center">Nenhum atendimento.</tr>
+                                {% endfor %}
+                                <tr>
+                                    <td>{% if total_hours != null %}<strong>Horas</strong>{% endif %}</td>
+                                    <td colspan="3">{% if total_hours != null %}<strong>{{total_hours}}</strong>{% endif %}</td>
+                                    <td colspan="3"></td>
+                                    <td class="text-right">
+                                        {% if ticket.add_called == true and ticket.last_status.id != 6 %}
+                                            <a href="javascript:void(0);" data-id="{{ticket.id}}" class="btn btn-success btn-xs btn-add-called" title="Adicionar Atendimento"><i class="fa fa-plus"></i> Adicionar</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>Despesas</h3>
+                    <form action="/ti/tickets/expense/print/{{ticket.id}}" method="post" class="form-print-expense" target="_blank">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th width="100">Data</th>
+                                    <th width="90">Cobrado</th>
+                                    <th width="190">Tipo</th>
+                                    <th width="200">Consultor</th>
+                                    <th width="100">Valor</th>
+                                    <th>Descrição</th>
+                                    <th width="90">
+                                        <a style="display:none" href="javascript:void(0);" class="
+                                        btn-print-expense" title="Imprimir recibo das despesas selecionadas"><i class="fa fa-print"></i> Imprimir</a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for exp in expenses %}
+                                    {% if exp.list == true %}
+                                        <tr>
+                                            <td>{{exp.date_at}}</td>
+                                            <td>{% if exp.company_billing == 'ON' %} Sim {% else %} Não {% endif %}</td>
+                                            <td>{{exp.type}}</td>
+                                            <td>{{exp.user}}</td>
+                                            <td>{{exp.value}}</td>
+                                            <td>{{exp.description|raw}}</td>
+                                            <td align="right">
+                                                {# <input type="checkbox" name="expenses[]" value="{{exp.id}}" title="Clique para Imprimir" class="chk-expense-item"> #}
+                                                {% if exp.can_delete %}
+                                                    <a href="javascript:void(0);" class="btn-edit-expense" data-id="{{exp.id}}" data-ticket-id="{{exp.ticket_id}}" data-date="{{exp.date_at}}" data-expense-id="{{exp.expense_id}}" data-description="{{exp.description|raw}}" data-value="{{exp.val}}" data-company-billing="{{exp.company_billing}}" title="Editar"><i class="fa fa-pencil text-inverse m-r-10 m-l-10"></i></a>
+                                                    <a href="javascript:void(0);" class="btn-delete-expense" data-id="{{exp.id}}" title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% else %}
+                                    <tr><td colspan="7" align="center">Nenhuma despesa.</tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="2">{% if total_value_expenses != null %}<strong>Total das despesas</strong>{% endif %}</td>
+                                    <td colspan="2">{% if total_value_expenses != null %}<strong>{{total_value_expenses}}</strong>{% endif %}</td>
+                                    <td colspan="2"></td>
+                                    <td>
+                                        {% if ticket.add_expense == true and ticket.last_status.id != 6 %}
+                                            <a href="javascript:void(0);" data-ticket-id="{{ticket.id}}" class="btn btn-success btn-xs btn-add-expense" title="Adicionar Despesa"><i class="fa fa-plus"></i> Adicionar</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>Histórico</h3>
+                    <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th width="160">Data</th>
+                            <th width="220">Status</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for status in history %}
+                            <tr>
+                                <td>{{status.created_at_br}}</td>
+                                <td>{{status.name}}</td>
+                                <td>{{status.description}}</td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="3" align="center">Nenhum histórico.</tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+    <div class="modal fade modal-delete-called" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão deste atendimento?
+                </div>
+                <div class="modal-footer">
+                    <form action="/ti/tickets/delete/called" method="post" class="form-delete">
+                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="ticket_id" value="{{ticket.id}}">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-form-modal btn-success" data-loading-text="Processando...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-delete-expense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão desta despesa?
+                </div>
+                <div class="modal-footer">
+                    <form action="/ti/tickets/delete/expense" method="post" class="form-delete-expense">
+                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="ticket_id" value="{{ticket.id}}">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-delete-expense btn-success" data-loading-text="Processando...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-delete-file" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do arquivo <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/ti/tickets/delete/file" method="post" class="form-delete-file">
+                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="ticket_id" value="{{ticket.id}}">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-delete-file btn-success" data-loading-text="Processando...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# MODAL DE EDIÇÃO DE ATENDIMENTO NO CHAMADO #}
+    <div class="modal fade modal-edit-called" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="javascript:void(0);" method="post" style="font-size:14px;" class="form-horizontal  form-edit-called">
+                    <input type="hidden" name="ticket_id" value="">
+                    <input type="hidden" name="id" value="">
+                    <input type="hidden" name="add_to_billing_report" value="ON" >
+                    <div class="modal-body">
+                        <h4>Editar Atendimento - Chamado <strong></strong></h4>
+                        <div class="form-group m-top-15 w100">
+                            <label style="font-weight: normal;">
+                                <input type="checkbox" name="add_to_billing_report" class="add_to_billing_report" value="ON"> Exibir no relatório de faturamento
+                            </label>
+                        </div>
+                        <div class="form-group mb-2">
+                            <input type="text" name="date" class="form-control" placeholder="Data" data-myrules="required" style="width:120px;">
+                       
+                            <input type="text" name="hour_start" class="form-control" placeholder="Hora inicial" data-myrules="required" style="width:100px;" value="" data-default="08:30">
+                        
+                            <input type="text" name="hour_finish" class="form-control" placeholder="Hora final" data-myrules="required" style="width:100px;" value="" data-default="18:30">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label style="font-weight: normal;"><input type="checkbox" name="closed_value" class="closed-value" value="ON"> Valor fechado</label>
+                        </div>
+                        <div class="form-group m-top-15 w100 group-closed-value hidden">
+                            <div class="input-group">
+                                <span class="input-group-addon">R$</span>
+                                <input type="text" name="hour_value" class="form-control" placeholder="Valor fechado" data-myrules="" style="width:130px;">
+                            </div>
+                        </div>
+                        <div class="form-group m-top-15 w100">
+                            <select name="hour_id" class="form-control" placeholder="Tipo de Hora" data-myrules="required" style="width: 100%">
+                                <option value="">Tipo de Hora</option>
+                                {% for hour in type_hours %}
+                                    <option value="{{hour.id}}" data-billing="{{hour.billing}}" data-goal="{{hour.goal}}">{{hour.name}} {% if hour.billing == 'ON' %} ($) {% endif %}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group m-top-15 w100">
+                            <select name="status" class="form-control" placeholder="Status do Atendimento" data-myrules="required" style="width: 100%">
+                                <option value="EM_ATENDIMENTO">Em Atendimento</option>
+                                <option value="CONCLUIDO">Concluído</option>
+                            </select>
+                        </div>
+                        <div class="form-group m-top-10 w100">
+                            <textarea class="form-control" name="description" style="width:100%; resize: none;" rows="5" placeholder="Descrição" data-myrules="required"></textarea>
+                        </div>
+                        <div class="form-group m-top-15 w100">
+                            <select name="user_id" class="form-control" placeholder="Consultor" data-myrules="required" style="width: 100%">
+                                <option value="">Consultor</option>
+                                {% for user in users_admin %}
+                                    <option value="{{user.id}}">{{user.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group m-top-10 w100">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="notification" value="1"> Enviar e-mail para o cliente
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 m-top-10">
+                                <span class="notification fcolor-b13125"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <span class="success m-right-20 fcolor-398439"></span>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-success btn-edit-called-submit" data-loading-text="Alterando...">Confirmar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {# EOF - MODAL DE EDIÇÃO DE ATENDIMENTO NO CHAMADO #}
+
+    {# MODAL DE INSERÇÃO/EDIÇÃO DE DESPESA NO CHAMADO #}
+    <div class="modal fade modal-expense" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="javascript:void(0);" method="post"  style="font-size:14px;"  class="form-horizontal form-expense">
+                    <input type="hidden" name="ticket_id" value="">
+                    <input type="hidden" name="id" value="">
+                    <div class="modal-body">
+                        <h4>Despesa - Chamado <strong></strong></h4>
+                        <div class="form-group m-top-15">
+                            <input type="text" name="date" value="{{"now"|date("d/m/Y")}}" class="form-control" placeholder="Data" data-myrules="required">
+                        </div>
+                        <div class="form-group m-top-15 w100">
+                            <select name="expense_id" class="form-control expense-id" placeholder="Tipo de Despesa" data-myrules="required" style="width: 100%">
+                                <option value="">Tipo de Despesa</option>
+                                {% for type in expense_types %}
+                                    <option value="{{type.id}}" data-default-value="{{type.default_value}}">{{type.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group m-top-10 w100">
+                            <div class="input-group">
+                                <span class="input-group-addon">R$</span>
+                                <input type="text" name="value" class="form-control" placeholder="Valor" data-myrules="required">
+                            </div>
+                        </div>
+                        <div class="form-group m-top-10 w100">
+                            <textarea class="form-control" name="description" style="resize: none;" rows="5" placeholder="Descrição" data-myrules="required"></textarea>
+                        </div>
+                        <div class="form-group m-top-10 w100">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="company_billing" value="ON"> Cobrado do cliente
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <span class="success m-right-20 fcolor-398439"></span>
+                        <span class="notification m-right-20 fcolor-b13125"></span>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-success btn-expense-submit" data-loading-text="Processando...">Confirmar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {# EOF - MODAL DE INSERÇÃO/EDIÇÃO DE DESPESA NO CHAMADO #}
+
+    {# MODAL DE INSERÇÃO DE ARQUIVO NO CHAMADO #}
+    <div class="modal fade modal-file" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="/ti/tickets/add/file" method="post"  style="font-size:14px;"  class="form-ticket-file" enctype="multipart/form-data">
+                    <input type="hidden" name="ticket_id" value="{{row.id}}">
+                    <div class="modal-body">
+                        <h4>Arquivo - Chamado <strong></strong></h4>
+                        <div class="form-group m-top-15">
+                            <input type="text" name="description" class="form-control" placeholder="Descrição" data-myrules="required">
+                        </div>
+                        <div class="form-group m-top-15">
+                            <input type="file" name="file" data-myrules="required">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <span class="success m-right-20 fcolor-398439"></span>
+                        <span class="notification m-right-20 fcolor-b13125"></span>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-success btn-file-submit" data-loading-text="Enviando...">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {# EOF - MODAL DE INSERÇÃO/EDIÇÃO DE ARQUIVO NO CHAMADO #}
+
+    {% include 'ticket/modal-add-called.html.twig' %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'baseImprimir.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        @media print and (orientation: landscape) {
+            /* landscape styles */
+        }
+        @page { margin: 2cm; }
+        body { margin: 1cm; }
+    </style>
+    <style type="text/css">
+        table { page-break-inside:auto }
+        thead { display:table-row-group }
+        tfoot { display:table-footer-group }
+    </style>
+
+    <style>
+        table {
+            border-collapse: collapse;
+            margin-top: 5px;
+            font-size: 10px;
+        }
+        th {
+            border: 2px solid black;
+        }
+
+        label {
+            display:block;
+            font-weight: bold;
+            font-size: 12px;
+            margin-left: 2px;
+        }
+
+        font {
+            margin-left: 2px;
+        }
+
+        .nao-quebrar {
+            page-break-inside: avoid;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+   
+{% endblock %}
+
+{% block title %}Portal Resfri Ar | Powered By Lidere Sistemas{% endblock %}
+
+{% block content %}
+        
+    <div id="page-wrapper">
+        <table class="table table-bordered" > 
+            <thead>
+                <tr>
+                    <th width="10%"><span class="inline"><img src="/images/{{empresa.diretorio}}/logo-login.png" width="200"></span></th>
+                    <th width="70%" class="text-center" style="font-size:25px;"><b>Listagem</b></th>
+                    <th width="20%" class="text-right">
+                         <strong  style="font-size:10px;"> Parâmetros do Relatório: </strong><br>
+                        Data Impressão: {{ "now"|date("d/m/Y h:m:s") }}<br>
+                    {% if data.filtros.data_recebimento is defined %}
+                        <strong  style="font-size:10px;"> Data Recebimento: {{data.filtros.data_recebimento}} </strong><br>
+                    {% endif %}
+                    {% if data.filtros.defeito_principal_id is defined %}
+                        <strong  style="font-size:10px;"> Defeito: {{data.filtrado.cod_defeito}} - {{data.filtrado.descricao_defeito}} </strong><br>
+                    {% endif %}
+                    {% if data.filtros.item_id is defined %}
+                        <strong  style="font-size:10px;"> Produto: {{data.filtrado.cod_item}} - {{data.filtrado.desc_tecnica}} </strong><br>
+                    {% endif %}
+                    {% if data.filtros.material_recebido is defined %}
+                        <strong  style="font-size:10px;"> Material Recebido: {% if data.filtros.material_recebido == 'N'%} Não {% else %} Sim {% endif %} </strong><br>
+                    {% endif %}
+                    {% if data.filtros.cliente_id is defined %}
+                        <strong  style="font-size:10px;"> Cliente: {{data.filtrado.cod_cli_assistencia}} - {{data.filtrado.descricao_cli_assistencia}} </strong><br>
+                    {% endif %}
+                    {% if data.filtros.cliente_origem_id is defined %}
+                        <strong  style="font-size:10px;"> Cliente Origem: {{data.filtrado.cod_cli_origem}} - {{data.filtrado.descricao_cli_origem}} </strong><br>
+                    {% endif %}
+                    {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'EV'%} 
+                        <strong  style="font-size:10px;"> Saída Produto: Enviar nova e vender na Cidade  </strong><br>
+                    {% endif %}
+                    {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'AC'%} 
+                        <strong  style="font-size:10px;"> Saída Produto: Acerto Comercial, Vender na Cidade </strong><br>
+                    {% endif %}
+                    {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'EN'%} 
+                        <strong  style="font-size:10px;"> Saída Produto: Enviar Nova e Sucatear  </strong><br>
+                    {% endif %}
+                    {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'JF'%} 
+                        <strong  style="font-size:10px;"> Saída Produto: Já foi, Sucatear  </strong><br>
+                    {% endif %}
+                    {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'AS'%} 
+                        <strong  style="font-size:10px;"> Saída Produto: Acerto Comercial, Sucatear  </strong><br>
+                    {% endif %}
+                    {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'MN'%} 
+                        <strong  style="font-size:10px;"> Saída Produto: Manutenção enviar a Mesma  </strong><br>
+                    {% endif %}
+                    {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'OA'%} 
+                        <strong  style="font-size:10px;"> Saída Produto: Orçamento Aprovado  </strong><br>
+                    {% endif %}
+                    {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'OR'%} 
+                        <strong  style="font-size:10px;"> Saída Produto: Orçamento Reprovado  </strong><br>
+                    {% endif %}
+                    </th>
+                </tr>
+            </thead>
+        </table>
+
+
+    
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                   <th>Modelo</th>
+                   <th>Quantidade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set total_geral = 0 %}
+                {% for registro in data.registros %}
+                    <tr>
+                        <td>{{registro.cod_item}}</td>
+                        <td>{{registro.total}}</td>
+                    </tr>
+                     {% set total_geral = total_geral + registro.total %}
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="text-right">Total:</td>
+                    <td>{{total_geral}}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

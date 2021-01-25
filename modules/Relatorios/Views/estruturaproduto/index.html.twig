@@ -1,0 +1,154 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+
+    <div class="btn-table-up ">
+        <div class="row">
+            <div class="col-lg-12 mb-1">
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Filtros <span class="caret"></span>
+                    </button>
+                     <button type="button" class="btn btn-info btn-imprimir ml-1" >
+                        <i class="fa fa-print"></i> Imprimir
+                    </button>
+                    <div class="dropdown-menu animated" style="width: 940px; padding: 15px;">
+                        <form action="/{{data.modulo.url}}" method="get" role="form" class="form-filtro">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Item</label>
+                                    <select name="itempr_id" id="select-item" class="form-control" >
+                                        {% if data.filtros is defined and data.filtros.itempr_id is not null %}
+                                            <option value="{{data.filtros.itempr_id}}" selected="selected">{{data.item_filtrado.codigo}} - {{data.item_filtrado.descricao}}</option>
+                                        {% endif %}
+                                    </select>
+                                    <input type="hidden" name="mascara_id" id="mascara_id" value="">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-success btn-filtrar" value="Filtrar">
+                                    <a href="javascript:void(0);" class="btn btn-inverse waves-effect waves-light btn-limpar-filtro" style="display:none;">Limpar Filtros</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if  data.estrutura != null %}
+    <div class="card mt-2" style="margin-bottom: 5px!important;">
+        <div class="card-body">
+            <div class="form-group">
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            {% if data.item_filtrado.mascara_id is not null %}
+                                <th>Máscara</th>
+                            {% endif %}
+                            {% if data.item_filtrado.pn is not null %}
+                                <th>PN</th>
+                            {% endif %}
+                            <th>Custo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>{{data.item_filtrado.codigo}} - {{data.item_filtrado.desc_tecnica}}</td>
+                            {% if data.item_filtrado.mascara_id is not null %}
+                                <td>{{data.item_filtrado.mascara_id}}</td>
+                            {% endif %}
+                            {% if data.item_filtrado.pn is not null %}
+                                <td>{{data.item_filtrado.pn}}</td>
+                            {% endif %}
+                            <td>{{data.custo_item_pai.custo|number_format(4, ',', '.')}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+               
+               {% if data.item_filtrado.cod_cli is not null %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>{{data.item_filtrado.cod_cli}} - {{data.item_filtrado.desc_cli}}</td></tr>
+                    </tbody>
+                </table>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <div class="card mt-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Descrição</th>
+                            <th>NCM</th>
+                            <th>Origem</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for estrutura in data.estrutura %}
+                            <tr>
+                                <td>{{estrutura.cod_item}}</td>
+                                <td>{{estrutura.desc_tecnica}}</td>
+                                <td>{{estrutura.ncm}}</td>
+                                <td>{{estrutura.origem}}</td>
+                                <td>{{estrutura.custo_mat}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+     <div class="card mt-2">
+        <div class="card-body">
+            Utilize o filtro para gerar o relatório!
+        </div>
+    </div>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends 'baseImprimir.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        @media print and (orientation: portrait) {
+            /* landscape styles */
+        }
+        @page { margin: 0; }
+        body { margin: 1cm; }
+    </style>
+    <style type="text/css">
+        table { page-break-inside:auto }
+        thead { display:table-row-group }
+        tfoot { display:table-footer-group }
+        .pagebreak { page-break-before: always; } 
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+   
+{% endblock %}
+
+{% block title %}Portal Resfri Ar | Powered By Lidere Sistemas{% endblock %}
+
+{% block content %}
+
+        <div class="pagebreak">
+            <div class="col-lg-12">
+                <div class="row" style="margin-top:50px;">
+                    <div class="col-md-12">
+                        <div class="text-center">
+                            <h4><strong class="text-center">Relatório de Visita - Montadora #{{registro.nro}}</strong></h4>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-3">
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-6">  
+                        <div class="form-group">
+                            <strong><p>Vendedor</p></strong>
+                            <p style="background-color:#d8d8d8;">{{registro.vendedor}}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">  
+                        <div class="form-group">
+                            <strong><p>Data</p></strong>
+                            <p style="background-color:#d8d8d8;">{{registro.criado_em_char}}</p>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-3">
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-12">  
+                        <div class="form-group">
+                            <strong><p>Cliente</p></strong>
+                            <p style="background-color:#d8d8d8;">{{registro.descricao_cliente}}</p>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Motivo</p></strong>
+                
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-3 ">
+                        <div class="form-group">
+                            <p style="background-color:#d8d8d8;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" disabled="disabled" name="check_motivo_com" value="S" {% if registro.check_motivo_com is defined and registro.check_motivo_com == 'S' %}checked="checked" {% endif %}  id="check-comercial">
+                                <label class="custom-control-label" for="check-comercial">Comercial</label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="form-group">
+                            <p style="background-color:#d8d8d8;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" disabled="disabled" name="check_motivo_eng" value="S" {% if registro.check_motivo_eng is defined and registro.check_motivo_eng == 'S' %} checked="checked" {% endif %} id="check-assistencia">
+                                <label class="custom-control-label" for="check-eng">Engenharia</label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="form-group">
+                            <p style="background-color:#d8d8d8;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" disabled="disabled" name="check_motivo_trei" value="S" {% if registro.check_motivo_trei is defined and registro.check_motivo_trei == 'S' %} checked="checked" {% endif %} id="check-treinamentos">
+                                <label class="custom-control-label" for="check-treinamentos">Treinamentos</label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="form-group">
+                            <p style="background-color:#d8d8d8;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" disabled="disabled" name="check_motivo_out"  value="S" {% if registro.check_motivo_out is defined and registro.check_motivo_out == 'S' %}checked="checked" {% endif %} id="check-outros">
+                                <label class="custom-control-label" for="check-outros">Outros</label>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-12 ">
+                    </div>
+                </div>
+
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Participantes</p></strong>
+                <div>
+                    {% if registro.participantes is defined and registro.participantes != null %}     
+                        {% set x = 1 %}
+                            <table class="table">
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Setor</th>
+                                    <th>Empresa</th>
+                                </tr>
+                        {% for participante in registro.participantes %}
+                 
+                                <tr><td>
+                                        {{participante.nome}}
+                                    </td>
+                                    <td>
+                                        {{participante.e_mail}}
+                                    </td>
+                                    <td>
+                                        {{participante.setor}}
+                                    </td>
+                                    <td>
+                                        {% if participante.cliente_descritivo != null %}
+                                            {{participante.cliente_descritivo}}
+                                        {% else %}
+                                            {{participante.cod_cli}} - {{participante.descricao}}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                        {% endfor %}
+                            </table>
+                    {% endif %}
+                </div>
+
+                <hr class="mb-3">
+                <strong style="margin-left:10px;"><p>Ata Visita</p></strong>
+                <hr class="mb-3">
+                <div class="row" style="margin-top:5px;margin-left:10px;">
+                    <div class="col-md-12">
+                        <p style="background-color:#d8d8d8;">{{registro.obs_vendedor|raw}}</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+{% endblock %}

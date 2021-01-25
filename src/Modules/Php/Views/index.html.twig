@@ -1,0 +1,48 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+    <style type="text/css">
+        #phpinfo pre {margin: 0px; font-family: monospace;}
+        #phpinfo a:link {color: #000099; text-decoration: none; background-color: #ffffff;}
+        #phpinfo a:hover {text-decoration: underline;}
+        #phpinfo table {border-collapse: collapse;}
+        #phpinfo .center {text-align: center;}
+        #phpinfo .center table { margin-left: auto; margin-right: auto; text-align: left;}
+        #phpinfo .center th { text-align: center !important; }
+        #phpinfo td, th { border: 1px solid gray; font-size: 75%; vertical-align: baseline; padding: 5px}
+        #phpinfo h1 {font-size: 150%;}
+        #phpinfo h2 {font-size: 125%;}
+        #phpinfo .p {text-align: left;}
+        #phpinfo .e {background-color: whiteSmoke; font-weight: bold; color: #000000;}
+        #phpinfo .h {background-color: #888888; font-weight: bold; color: white;}
+        #phpinfo .v {background-color: white; color: #000000;}
+        #phpinfo i {color: #666666; background-color: #cccccc;}
+        #phpinfo img {float: right; border: 0px;}
+        #phpinfo hr {width: 600px; background-color: #cccccc; border: 0px; height: 1px; color: #000000;}
+        #phpinfo table { width: 100%;}
+        #phpinfo td, th{ font-size: 90% !important;}
+        #phpinfo td.e{    width: 30%;}
+    </style>
+{% endblock %}
+
+{% block principal %}
+
+    <div class="alert alert-info alert-dismissable">
+        A localização atual do php.ini é <b>{{data.ini_loaded_file}}</b>
+    </div>
+    <div class="card card-body">
+        <div id="phpinfo">
+            {{data.resultado|raw}}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

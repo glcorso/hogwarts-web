@@ -1,0 +1,268 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    <div class="card card-outline-info">
+        <div class="card-header">
+            <h4 class="m-b-0 text-white">Empresa</h4>
+        </div>
+        <div class="card-body">
+
+            <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}"
+                  method="post"
+                  role="form"
+                  enctype="multipart/form-data"
+                  class="form">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Razão Social *</label>
+                            <input type="text" name="razao_social" class="form-control" data-myrules="required" value="{{data.registro.razao_social}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Nome Fantasia *</label>
+                            <input type="text" name="nome_fantasia" class="form-control" data-myrules="required" value="{{data.registro.nome_fantasia}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Domínio * <small>Multiplos domínios separar por virgula.</small></label>
+                            <input type="text" name="dominio" class="form-control" data-myrules="required" value="{{data.registro.dominio}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Diretório * <small>Verifique a permissão deste diretório.</small></label>
+                            <input type="text" name="diretorio" class="form-control" data-myrules="required" value="{{data.registro.diretorio}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Situação *</label>
+                            <select name="situacao" id="situacao" class="form-control">
+                                <option value="ativo" {% if data.registro.situacao == 'ativo' %} selected="selected" {% endif %}>Ativo</option>
+                                <option value="inativo" {% if data.registro.situacao == 'inativo' %} selected="selected" {% endif %}>Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Cor Principal * </label>
+                            <input type="text" name="cor_principal" class="form-control" data-myrules="required" value="{{data.registro.cor_principal}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>API Token * <small>Ao alterar este token todas as aplicações conectadas neste portal iram parar de funcionar.</small></label>
+                            <input type="text" name="api_token" class="form-control" data-myrules="required" value="{{data.registro.api_token}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Oracle Host </label>
+                            <input type="text" name="oracle_host" class="form-control" data-myrules="required" value="{{data.registro.oracle_host}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Oracle Porta </label>
+                            <input type="text" name="oracle_porta" class="form-control" data-myrules="required" value="{{data.registro.oracle_porta}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Oracle Sid </label>
+                            <input type="text" name="oracle_sid" class="form-control" data-myrules="required" value="{{data.registro.oracle_sid}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Oracle Usuário </label>
+                            <input type="text" name="oracle_usuario" class="form-control" data-myrules="required" value="{{data.registro.oracle_usuario}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Oracle Senha </label>
+                            <input type="text" name="oracle_senha" class="form-control" data-myrules="required" value="{{data.registro.oracle_senha}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Id da empresa no ERP </label>
+                            <input type="text" name="empr_id" class="form-control" data-myrules="required" value="{{data.registro.empr_id}}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Id da empresa no ERP nfe </label>
+                            <input type="text" name="empr_nfe" class="form-control" data-myrules="required" value="{{data.registro.empr_nfe}}" />
+                        </div>
+                    </div>
+                </div>
+
+                {% if data.registro.id is defined %}
+                <div class="card card-outline-info">
+                <div class="card-header">
+                    <h4 class="m-b-0 text-white">Lista de Preço - Assistência Externa</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mt-1">
+                        <div class="col-md-12">
+                            <div class="form-group">
+
+                                <div class="form-group">
+                                    <input id="upload" type="file" name="files[]" multiple>
+                                </div>
+
+                                {% if data.registro.arquivos is defined and data.registro.arquivos != null %}
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="80%">Arquivo</th>
+                                                        <th width="20%"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for file in data.registro.arquivos %}
+                                                        <tr>
+                                                            <td>{{file.arquivo}}</td>
+                                                            <td align="right">
+                                                                <a href="/auxiliares/empresas/arquivos/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+                                                                <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-name="{{file.arquivo}}" title="Excluir" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                            </td>
+                                                        </tr>
+                                                    {% else %}
+                                                        <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+
+            </form>
+        </div>
+
+    </div>
+
+
+    <div class="modal fade modal-delete-arquivo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do Arquivo <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/auxiliares/empresas/arquivos/apagar-arquivo" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="registro_id" value="{{data.registro.id}}">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

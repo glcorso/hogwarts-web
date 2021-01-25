@@ -1,0 +1,188 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success}}
+        </div>
+    {% endif %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error}}
+        </div>
+    {% endif %}
+
+    <div class="btn-table-up">
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Filtros <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu animated" style="width: 680px; padding: 15px;">
+                        <form action="/ti/attendance" method="get" class="form-filtro" role="form">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Nro.</label>
+                                    <input name="id" type="text" class="form-control" id="pref-search" value="{% if search.id is defined %}{{search.id}}{% endif %}">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <div class="input-group input-daterange">
+                                        <input type="text" id="date_start" name="date_start" class="form-control date_start" value="{% if search.date_start is defined %}{{search.date_start}}{% else %}{{filtros_default.start_date}}{% endif %}" placeholder="__/__/____" data-myrules="required">
+                                        <div class="input-group-addon">até</div>
+                                        <input type="text" id="date_end" name="date_end" class="form-control date_end" value="{% if search.date_end is defined %}{{search.date_end}}{% else %}{{filtros_default.end_date}}{% endif %}" placeholder="__/__/____" data-myrules="required">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Cliente</label>
+                                    <select name="company_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for company in options.companies %}
+                                            <option value="{{company.id}}" {% if search.company_id is defined and search.company_id == company.id %} selected="selected" {% endif %}>{{company.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Tipo</label>
+                                    <select name="type_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for type in options.types %}
+                                            <option value="{{type.id}}" {% if search.type_id is defined and search.type_id == type.id %} selected="selected" {% endif %}>{{type.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Tipo de Hora</label>
+                                    <select name="hour_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for hour in options.hours %}
+                                            <option value="{{hour.id}}" {% if search.hour_id is defined and search.hour_id == hour.id %} selected="selected" {% endif %}>{{hour.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Consultor</label>
+                                    <select name="user_internal_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for user in options.users %}
+                                            <option value="{{user.id}}" {% if search.user_internal_id is defined and search.user_internal_id == user.id %} selected="selected" {% endif %}>{{user.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search" >Categoria</label>
+                                    <select name="category" class="form-control">
+                                        <option value=""></option>
+                                            <option value="C" {% if ticket is defined and ticket.category == 'C' %} selected="selected" {% endif %}>Consultoria</option>
+                                            <option value="D" {% if ticket is defined and ticket.category == 'D' %} selected="selected" {% endif %}>Desenvolvimento</option>
+                                            <option value="S" {% if ticket is defined and ticket.category == 'S' %} selected="selected" {% endif %}>Suporte</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-success" value="Filtrar">
+                                    <a href="javascript:void(0);" class="btn btn-secondary btn-limpar-filtro">Limpar Filtros</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <div class="card mt-2">
+        <div class="card-body">
+        {% for row in users %}   
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th colspan="9">{{row.name}}</th>
+                        </tr>
+                        <tr>
+                            <th>Chamado</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Hora Inicial</th>
+                            <th>Hora Final</th>
+                            <th>Tipo de Hora</th>
+                            <th>Descrição</th>
+                            <th>Horas</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for called in row.calleds %}
+                            <tr>
+                                <td width="5%"><a href="/ti/tickets/form/{{called.ticket_id}}">{{called.ticket_id}}</a></td>
+                                <td width="10%">{{called.company_name}}</td>
+                                <td width="5%">{{called.date_br}}</td>
+                                <td width="5%">{{called.hour_start}}</td>
+                                <td width="5%">{{called.hour_finish}}</td>
+                                <td width="10%">{{called.hour_name}}</td>
+                                <td width="40%">{{called.description|raw}}</td>
+                                <td width="10%">{{called.hour_total}}</td>
+                                <td width="10%">R$ {{called.value|number_format('2',',','.')}}</td>
+                            </tr>
+                        {% else %}
+			    <tr>
+				<td colspan="9" class="text-center">
+					Nenhum registro de atividade encontrado!
+				</td>
+			    </tr>
+			{% endfor %}
+                        <tr>
+                            <td colspan="7"></td>
+                            <td><strong>{% if row.total_hours is defined and row.total_hours != null %}{{row.total_hours}}{% else %} - {% endif %}</strong></td>
+                            <td colspan="1"><strong>R$ {{row.billing_value|number_format('2',',','.')}}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+        {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-pay" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirma o pagamento das despesas para o consultor <strong></strong>
+                </div>
+                <div style="text-align: right">
+                    <form action="" method="get" target="_blank" style="padding:15px;">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal-confirma btn-success" data-loading-text="Processando...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

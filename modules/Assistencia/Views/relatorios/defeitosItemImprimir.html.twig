@@ -1,0 +1,119 @@
+{% extends 'baseImprimir.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        @media print and (orientation: landscape) {
+            /* landscape styles */
+        }
+        @page { margin: 2cm; }
+        body { margin: 1cm; }
+    </style>
+    <style type="text/css">
+        table { page-break-inside:auto }
+        thead { display:table-row-group }
+        tfoot { display:table-footer-group }
+    </style>
+
+    <style>
+        table {
+            border-collapse: collapse;
+            margin-top: 5px;
+            font-size: 10px;
+        }
+        th {
+            border: 2px solid black;
+        }
+
+        label {
+            display:block;
+            font-weight: bold;
+            font-size: 12px;
+            margin-left: 2px;
+        }
+
+        font {
+            margin-left: 2px;
+        }
+
+        .nao-quebrar {
+            page-break-inside: avoid;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+   
+{% endblock %}
+
+{% block title %}Portal Resfri Ar | Powered By Lidere Sistemas{% endblock %}
+
+{% block content %}
+        
+    <div id="page-wrapper">
+        <table class="table table-bordered" > 
+            <thead>
+                <tr>
+                    <th width="10%"><span class="inline"><img src="/images/{{empresa.diretorio}}/logo-login.png" width="200"></span></th>
+                    <th width="70%" class="text-center" style="font-size:25px;"><b>Defeitos Por Item</b></th>
+                    <th width="20%" class="text-right">
+                         <strong  style="font-size:10px;"> Parâmetros do Relatório: </strong><br>
+                        Data Impressão: {{ "now"|date("d/m/Y h:m:s") }}<br>
+                    {% if data.filtros.data_recebimento is defined %}
+                        <strong  style="font-size:10px;"> Data Recebimento: {{data.filtros.data_recebimento}} </strong><br>
+                    {% endif %}
+                    {% if data.filtros.defeito_principal_id is defined %}
+                        <strong  style="font-size:10px;"> Defeito: {{data.filtrado.cod_defeito}} - {{data.filtrado.descricao_defeito}} </strong><br>
+                    {% endif %}
+                    {% if data.filtros.item_id is defined %}
+                        <strong  style="font-size:10px;"> Produto: {{data.filtrado.cod_item}} - {{data.filtrado.desc_tecnica}} </strong><br>
+                    {% endif %}
+                    </th>
+                </tr>
+            </thead>
+        </table>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th width="40%" style="background-color:#00000029;">Defeito</th>
+                        {% set total_itens = 0 %}
+                        {% for item in data.itens %}
+                                {% set total_itens = total_itens + 1 %}
+                            <th width="10%" style="background-color:#00000029;">{{item.cod_item}}</th>
+                        {% endfor %}
+                        <th style="background-color:#00000029;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set total_geral = 0 %}
+                    {% for defeito in data.estrutura.defeitos %}
+                        <tr>
+                            {% set total_linha = 0 %}
+                            <td style="background-color:#00000029;">{{defeito.desc_defeito_tecnico}}</td> 
+                            {% for item in defeito.itens %}
+                                <td class="text-center">{{item.quantidade}}</td>
+                             {% set total_linha = item.quantidade + total_linha %}
+                            {% endfor %}
+                            <td style="background-color:#00000029;">{{total_linha}}</td>
+                            {% set total_geral = total_geral + total_linha %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="{{total_itens+1}}">Total Geral: </td>
+                        <td>{{total_geral}}</td>
+                    </tr>
+                </tfoot>
+            </table>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+
+    <script type="text/javascript">
+      //  $(document).ready(function () { window.print(); });
+    </script>
+{% endblock %}

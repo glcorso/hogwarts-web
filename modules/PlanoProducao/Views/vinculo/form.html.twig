@@ -1,0 +1,91 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+    <form action="{% if data.permissao.permissao > 1 %}{% if data.registro.id is defined and data.registro.id != null %}/{{data.modulo.url}}/edit {% else %} /{{data.modulo.url}}/add {% endif %} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-usuario">
+
+           
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Vínculo de Usuário x Planejador</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Usuário*</label>
+                            <select name="usuario_id" class="form-control" required="required">
+                                <option value="">Selecione um usuário...</option>
+                                {% for usuario in data.usuarios %}
+                                    <option value="{{usuario.id}}" {% if data.registro.usuario_id is defined and data.registro.usuario_id == usuario.id %} selected="selected" {% endif %}>{{usuario.nome}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Planejador*</label>
+                            <select name="func_id" class="form-control" required="required">
+                                <option value="">Selecione um planejador...</option>
+                                {% for planejador in data.planejadores %}
+                                    <option value="{{planejador.id}}" {% if data.registro.func_id is defined and data.registro.func_id == planejador.id %} selected="selected" {% endif %}>{{planejador.codigo}} - {{planejador.descricao}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

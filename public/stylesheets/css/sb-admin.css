@@ -1,0 +1,430 @@
+/*
+Author: Start Bootstrap - http://startbootstrap.com
+'SB Admin' HTML Template by Start Bootstrap
+
+All Start Bootstrap themes are licensed under Apache 2.0.
+For more info and more free Bootstrap 3 HTML themes, visit http://startbootstrap.com!
+*/
+
+/* ATTN: This is mobile first CSS - to update 786px and up screen width use the media query near the bottom of the document! */
+
+/* Global Styles */
+/* Nav Messages */
+
+.messages-dropdown .dropdown-menu .message-preview .avatar,
+.messages-dropdown .dropdown-menu .message-preview .name,
+.messages-dropdown .dropdown-menu .message-preview .message,
+.messages-dropdown .dropdown-menu .message-preview .time {
+  display: block;
+}
+
+.messages-dropdown .dropdown-menu .message-preview .avatar {
+  float: left;
+  margin-right: 15px;
+}
+
+.messages-dropdown .dropdown-menu .message-preview .name {
+  font-weight: bold;
+}
+
+.messages-dropdown .dropdown-menu .message-preview .message {
+  font-size: 12px;
+}
+
+.messages-dropdown .dropdown-menu .message-preview .time {
+  font-size: 12px;
+}
+
+
+/* Nav Announcements */
+
+.announcement-heading {
+  font-size: 50px;
+  margin: 0;
+}
+
+.announcement-text {
+  margin: 0;
+}
+
+/* Table Headers */
+
+table.tablesorter thead {
+  cursor: pointer;
+}
+
+table.tablesorter thead tr th:hover {
+  background-color: #f5f5f5;
+}
+
+/* Flot Chart Containers */
+
+.flot-chart {
+  display: block;
+  height: 400px;
+}
+
+.flot-chart-content {
+  width: 100%;
+  height: 100%;
+}
+
+/* Edit Below to Customize Widths > 768px */
+@media (min-width:768px) {
+
+  /* Wrappers */
+
+  #wrapper {
+    padding-left: 225px;
+  }
+
+  #page-wrapper {
+    padding: 15px 25px;
+  }
+
+  /* Side Nav */
+
+  .side-nav {
+    margin-left: -225px;
+    left: 225px;
+    width: 225px;
+    position: fixed;
+    top: 50px;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    background-color: #222222;
+    overflow-y: auto;
+  }
+
+  /* Bootstrap Default Overrides - Customized Dropdowns for the Side Nav */
+
+  .side-nav>li.dropdown>ul.dropdown-menu {
+    position: relative;
+    min-width: 225px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+
+  .side-nav>li.dropdown>ul.dropdown-menu>li>a {
+    color: #999999;
+    padding: 15px 15px 15px 25px;
+  }
+
+  .side-nav>li.dropdown>ul.dropdown-menu>li>a:hover,
+  .side-nav>li.dropdown>ul.dropdown-menu>li>a.active,
+  .side-nav>li.dropdown>ul.dropdown-menu>li>a:focus {
+    color: #fff;
+    background-color: #892219;
+  }
+
+  .side-nav>li>a {
+    width: 225px;
+  }
+
+  .navbar-inverse .navbar-nav>li>a:hover,
+  .navbar-inverse .navbar-nav>li>a:focus {
+    background-color: #892219;
+  }
+
+  /* Nav Messages */
+
+  .messages-dropdown .dropdown-menu {
+    min-width: 300px;
+  }
+
+  .messages-dropdown .dropdown-menu li a {
+    white-space: normal;
+  }
+
+  .navbar-collapse {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+}
+
+
+/***********************************************/
+
+.login-logo {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-credits {
+  text-align: center;
+  font-size: 11px;
+}
+
+.action-bar {
+  top: 0;
+  right: 15px;
+  position: absolute;
+  /*width: 85%;*/
+}
+
+.myValidate{
+  border: 1px solid #CCC;
+  margin: 0 auto;
+  max-width: 500px;
+  padding: 20px;
+  width: 90%;
+}
+.notification{
+  margin-bottom: 15px;
+  display: none;
+}
+label{
+  display: block;
+  margin-bottom: 10px;
+}
+.error{
+  border: 1px solid #A94442;
+}
+
+.fcolor-b13125 {
+  color: #b13125;
+}
+
+.fcolor-398439 {
+  color: #398439;
+}
+
+.f-right {
+  float: right!important;
+}
+
+.m-top-2 {
+  margin-top: 2px!important;
+}
+
+.m-top-10 {
+  margin-top: 10px!important;
+}
+
+.m-top-20 {
+  margin-top: 20px!important;
+}
+
+.m-bottom-5 {
+  margin-bottom: 5px!important;
+}
+
+.m-bottom-15 {
+  margin-bottom: 15px!important;
+}
+
+.m-right-20 {
+  margin-right: 20px!important;
+}
+
+.min-width-93 {
+  min-width: 93px!important;
+}
+
+.p-0 {
+  padding: 0!important;
+}
+
+.p-bottom-15 {
+  padding-bottom: 15px!important;
+}
+
+.p-bottom-40 {
+  padding-bottom: 40px!important;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.abs-right {
+  right: 0;
+}
+
+.abs-right-20 {
+  right: 20px;
+}
+
+.p-left-0 {
+  padding-left: 0!important;
+}
+
+.p-right-0 {
+  padding-right: 0!important;
+}
+
+.w-70 {
+  width: 70px;
+}
+
+.w-100 {
+  width: 100px;
+}
+
+.w-120 {
+  width: 120px;
+}
+
+.w-128 {
+  width: 128px;
+}
+
+.w-135 {
+  width: 135px;
+}
+
+.w-140 {
+  width: 140px;
+}
+
+.solid-box.general-one {
+  text-align: center;
+  padding: 20px 40px 20px 20px;
+}
+
+.dl-horizontal dt {
+  text-align: left;
+}
+
+.solid-box {
+  border: 1px solid #E3E3E3;
+  padding: 10px 0;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  border-bottom: 3px solid #E3E3E3;
+  overflow: hidden;
+  margin-bottom: 20px;
+  clear: right;
+}
+
+.solid-box.general-one h4 {
+  font-size: 26px;
+  margin-top: 18px;
+  margin-bottom: 0;
+}
+
+.add-variant-wrap .form-group ul {
+  margin:0!important;
+  padding:0!important;
+}
+
+.add-variant-wrap .form-group ul li {
+  list-style-type: none;
+}
+
+/* CSS File */
+.float-r {
+  float: right!important;
+}
+
+.margin-r-15 {
+  margin-right: 15px;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.m-bottom-30 {
+  margin-bottom: 30px;
+}
+
+.m-left-13 {
+  margin-left: 13px!important;
+}
+
+.m-left-14 {
+  margin-left: 14px!important;
+}
+
+.m-right-10 {
+  margin-right: 10px!important;
+}
+
+.m-top-10 {
+  margin-top: 10px;
+}
+
+.m-top-15 {
+  margin-top: 15px;
+}
+
+.m-top-30 {
+  margin-top: 30px!important;
+}
+
+.m-top-40 {
+  margin-top: 40px;
+}
+
+.m-top-50 {
+  margin-top: 50px;
+}
+
+.font-12 {
+  font-size: 12px;
+}
+
+.font-13 {
+  font-size: 13px;
+}
+
+.font-white {
+  color: #FFF;
+}
+
+.form .error {
+  border-color: #A94442!important;
+}
+
+.star-on {
+  color: #ea0;
+}
+
+.star-off {
+  color: #ddd;
+}
+
+.w100 {
+  width: 100%;
+}
+
+.w100p {
+  width: 100px;
+}
+
+.table > tbody > tr:nth-child(odd).yellow {
+  background-color: #ffffb3;
+}
+
+.table > tbody > tr:nth-child(even).yellow {
+  background-color: #ffffe6;
+}
+
+.table > tbody > tr.yellow > td {
+  background-color: transparent;
+}
+
+.blue {
+  color: #0000FF;
+}
+
+.red {
+  color: #FF0000;
+}
+
+
+
+
+
+
+

@@ -1,0 +1,521 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-visitas" enctype="multipart/form-data">
+
+           
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Relatório de Visitas - Rede</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" id="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="prospect_id" id="prospect_id" value="{{data.registro.prospect_id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+                <input type="hidden" name="setor" value="{{data.setor}}">
+                <input type="hidden" name="tipo_rel" value="R">
+
+                <div class="row">
+
+                    {% if data.registro.id is defined and data.registro.est_id != null %}
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                 <label>Nro</label>
+                                 <input type="text" name="nro" value="{{data.registro.nro}}" class="form-control" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                 <label>Vendedor</label>
+                                 <input type="text" name="vend_nome" value="{{data.registro.vendedor}}" class="form-control" disabled="disabled">
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente" {% if data.registro.id is defined and data.registro.est_id == null %} style="display:none;" {% endif %} >
+                            <label>Cliente*</label>
+                            <select name="est_id" id="select-cliente" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} class="form-control" required="required"> 
+                                {% if data.registro.est_id is defined %}
+                                    <option value="{{data.registro.est_id}}">
+                                        {{data.registro.codigo_cliente}} - {{data.registro.descricao_cliente}}
+                                    </option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %}>
+                            <label>Razão Social*</label>
+                            <input type="text" name="razao_social" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="razao_social" class="form-control" maxlength="100" {% if data.registro.razao_social_prospect is defined and data.registro.razao_social_prospect != null %}value="{{data.registro.razao_social_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Nome Fantasia</label>
+                            <input type="text" name="nome_fantasia" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="nome_fantasia" class="form-control" maxlength="100" {% if data.registro.nome_fantasia_prospect is defined and data.registro.nome_fantasia_prospect != null %}value="{{data.registro.nome_fantasia_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>CNPJ/CPF</label>
+                            <input type="text" name="cnpj_cpf" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="cnpj_cpf" class="form-control" maxlength="100" {% if data.registro.cnpj_cpf_prospect is defined and data.registro.cnpj_cpf_prospect != null %}value="{{data.registro.cnpj_cpf_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Cidade*</label>
+                            <input type="text" name="cidade" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="cidade" class="form-control" maxlength="100" {% if data.registro.cidade_prospect is defined and data.registro.cidade_prospect != null %}value="{{data.registro.cidade_prospect}}"{% endif %} >
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Estado*</label>
+                            <select name="uf" class="form-control" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="uf">
+                                <option value=""></option>
+                                <option value="AC" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'AC' %} selected="selected" {% endif %}>Acre</option>
+                                <option value="AL" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'AL' %} selected="selected" {% endif %}>Alagoas</option>
+                                <option value="AP" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'AP' %} selected="selected" {% endif %}>Amapá</option>
+                                <option value="AM" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'AM' %} selected="selected" {% endif %}>Amazonas</option>
+                                <option value="BA" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'BA' %} selected="selected" {% endif %}>Bahia</option>
+                                <option value="CE" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'CE' %} selected="selected" {% endif %}>Ceará</option>
+                                <option value="DF" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'DF' %} selected="selected" {% endif %}>Distrito Federal</option>
+                                <option value="ES" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'ES' %} selected="selected" {% endif %}>Espírito Santo</option>
+                                <option value="GO" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'GO' %} selected="selected" {% endif %}>Goiás</option>
+                                <option value="MA" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'MA' %} selected="selected" {% endif %}>Maranhão</option>
+                                <option value="MT" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'MT' %} selected="selected" {% endif %}>Mato Grosso</option>
+                                <option value="MS" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'MS' %} selected="selected" {% endif %}>Mato Grosso do Sul</option>
+                                <option value="MG" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'MG' %} selected="selected" {% endif %}>Minas Gerais</option>
+                                <option value="PA" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PA' %} selected="selected" {% endif %}>Pará</option>
+                                <option value="PB" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PB' %} selected="selected" {% endif %}>Paraíba</option>
+                                <option value="PR" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PR' %} selected="selected" {% endif %}>Paraná</option>
+                                <option value="PE" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PE' %} selected="selected" {% endif %}>Pernambuco</option>
+                                <option value="PI" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PI' %} selected="selected" {% endif %}>Piauí</option>
+                                <option value="RJ" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RJ' %} selected="selected" {% endif %}>Rio de Janeiro</option>
+                                <option value="RN" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RN' %} selected="selected" {% endif %}>Rio Grande do Norte</option>
+                                <option value="RS" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RS' %} selected="selected" {% endif %}>Rio Grande do Sul</option>
+                                <option value="RO" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RO' %} selected="selected" {% endif %}>Rondônia</option>
+                                <option value="RR" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RR' %} selected="selected" {% endif %}>Roraima</option>
+                                <option value="SC" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'SC' %} selected="selected" {% endif %}>Santa Catarina</option>
+                                <option value="SP" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'SP' %} selected="selected" {% endif %}>São Paulo</option>
+                                <option value="SE" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'SE' %} selected="selected" {% endif %}>Sergipe</option>
+                                <option value="TO" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'TO' %} selected="selected" {% endif %}>Tocantins</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Contato Dia da Visita*</label>
+                            <input type="text" name="contato" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="contato" class="form-control" maxlength="100" {% if data.registro.contato_prospect is defined and data.registro.contato_prospect != null %}value="{{data.registro.contato_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Telefone*</label>
+                            <input type="text" name="telefone"  {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="telefone"  class="form-control" maxlength="30" {% if data.registro.telefone_prospect is defined and data.registro.telefone_prospect != null %}value="{{data.registro.telefone_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Celular</label>
+                            <input type="text" name="tel_celular" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="celular" class="form-control" maxlength="30" {% if data.registro.tel_celular_prospect is defined and data.registro.tel_celular_prospect != null %}value="{{data.registro.tel_celular_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>E-mail</label>
+                            <input type="email" name="e_mail" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="e_mail" class="form-control" maxlength="30" {% if data.registro.e_mail_prospect is defined and data.registro.e_mail_prospect != null %}value="{{data.registro.e_mail_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="form-group div-cliente" {% if data.registro.id is defined and data.registro.est_id == null %} style="display:none;" {% endif %} >
+                            <label>Contato Dia da Visita*</label>
+                            <input type="text" name="contato_cliente" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="contato-cliente" class="form-control" maxlength="200" {% if data.registro.contato_cliente is defined and data.registro.contato_cliente != null %}value="{{data.registro.contato_cliente}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group div-cliente" {% if data.registro.id is defined and data.registro.est_id == null %} style="display:none;" {% endif %} >
+                            <label>Telefone*</label>
+                            <input type="text" name="telefone_cliente" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="telefone-cliente"  class="form-control" maxlength="20" {% if data.registro.telefone_cliente is defined and data.registro.telefone_cliente != null %}value="{{data.registro.telefone_cliente}}"{% endif %}>
+                        </div>
+                    </div>
+
+                    {% if data.registro.id is not defined %}
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente">
+                            <button type="button" class="btn btn-success" id="btn-cliente-novo"><i class="fa fa-plus"></i> Novo Cliente</button>
+                        </div>
+                        <div class="form-group div-cliente-novo" style="display:none;">
+                            <button type="button" class="btn btn-success" id="btn-cliente-existente"><i class="fa fa-arrow-left"></i> Cliente Existente</button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>   
+                <hr class="mb-4">
+                <h4 class="mb-3"><strong>Motivo</strong></h4>
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_motivo_at" value="S" {% if data.registro.check_motivo_at is defined and data.registro.check_motivo_at == 'S' %} checked="checked" {% endif %} id="check-assistencia">
+                            <label class="custom-control-label" for="check-assistencia">Assistência Técnica</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_motivo_trei" value="S" {% if data.registro.check_motivo_trei is defined and data.registro.check_motivo_trei == 'S' %} checked="checked" {% endif %} id="check-treinamentos">
+                            <label class="custom-control-label" for="check-treinamentos">Treinamentos</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_motivo_com" value="S" {% if data.registro.check_motivo_com is defined and data.registro.check_motivo_com == 'S' %}checked="checked" {% endif %}  id="check-comercial">
+                            <label class="custom-control-label" for="check-comercial">Comercial</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_motivo_out"  value="S" {% if data.registro.check_motivo_out is defined and data.registro.check_motivo_out == 'S' %}checked="checked" {% endif %} id="check-outros">
+                            <label class="custom-control-label" for="check-outros">Outros</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <label>Descreva</label>
+                        <textarea class="form-control" disabled="disabled" id="descreva_motivo" name="obs_motivo_outros" rows="3" style="resize:none;">{% if data.registro.obs_motivo_outros is defined and data.registro.obs_motivo_outros != null %}{{data.registro.obs_motivo_outros}}{% endif %}</textarea>
+                    </div>
+                </div> 
+
+                <hr class="mb-4">
+                <h4 class="mb-4"><strong>Relação de Atividades</strong></h4>
+                
+                <h5 class="mb-1"><strong>Sede</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="sede_propria" name="ra_sede" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} {% if data.registro.ra_sede is defined and data.registro.ra_sede == 'P' %} checked="checked" {% endif %} type="radio" class="custom-control-input" value="P" required="required">
+                            <label class="custom-control-label" for="sede_propria">Própria</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="sede_alugada" name="ra_sede" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} {% if data.registro.ra_sede is defined and data.registro.ra_sede == 'A' %} checked="checked" {% endif %} type="radio" class="custom-control-input" value="A" required="required">
+                            <label class="custom-control-label" for="sede_alugada">Alugada</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <h5 class="mb-1"><strong>Estrutura</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="ra_estrutura_excelente" name="ra_estrutura" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} {% if data.registro.ra_estrutura is defined and data.registro.ra_estrutura == 'E' %} checked="checked" {% endif %} type="radio" class="custom-control-input" required="required" value="E" >
+                            <label class="custom-control-label" for="ra_estrutura_excelente">Excelente</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="ra_estrutura_grande" name="ra_estrutura" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} type="radio" class="custom-control-input" required="required" value="G" {% if data.registro.ra_estrutura is defined and data.registro.ra_estrutura == 'G' %} checked="checked" {% endif %}>
+                            <label class="custom-control-label" for="ra_estrutura_grande">Grande</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="ra_estrutura_media" name="ra_estrutura" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} type="radio" class="custom-control-input" required="required" value="M" {% if data.registro.ra_estrutura is defined and data.registro.ra_estrutura == 'M' %} checked="checked" {% endif %}>
+                            <label class="custom-control-label" for="ra_estrutura_media">Média</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="ra_estrutura_pequena" name="ra_estrutura" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} type="radio" class="custom-control-input" required="required" value="P" {% if data.registro.ra_estrutura is defined and data.registro.ra_estrutura == 'P' %} checked="checked" {% endif %}>
+                            <label class="custom-control-label" for="ra_estrutura_pequena">Pequena</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <h5 class="mb-1"><strong>Estoque Geral</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="ra_estoque_geral_excelente" name="ra_estoque_geral" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} type="radio" class="custom-control-input" required="required" value="E" {% if data.registro.ra_estoque_geral is defined and data.registro.ra_estoque_geral == 'E' %} checked="checked" {% endif %} >
+                            <label class="custom-control-label" for="ra_estoque_geral_excelente">Excelente</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="ra_estoque_geral_grande" name="ra_estoque_geral" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} type="radio" class="custom-control-input" required="required" value="G" {% if data.registro.ra_estoque_geral is defined and data.registro.ra_estoque_geral == 'G' %} checked="checked" {% endif %}>
+                            <label class="custom-control-label" for="ra_estoque_geral_grande">Grande</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="ra_estoque_geral_medio" name="ra_estoque_geral" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} type="radio" class="custom-control-input" required="required" value="M" {% if data.registro.ra_estoque_geral is defined and data.registro.ra_estoque_geral == 'M' %} checked="checked" {% endif %} >
+                            <label class="custom-control-label" for="ra_estoque_geral_medio">Médio</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-radio">
+                            <input id="ra_estoque_geral_pequeno" name="ra_estoque_geral" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} type="radio" class="custom-control-input" required="required" value="P" {% if data.registro.ra_estoque_geral is defined and data.registro.ra_estoque_geral == 'P' %} checked="checked" {% endif %}>
+                            <label class="custom-control-label" for="ra_estoque_geral_pequeno">Pequeno</label>
+                        </div>
+                    </div>
+                </div>
+               
+                <h5 class="mb-1"><strong>Climatizadores</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_climatizador" value="S" {% if data.registro.check_climatizador is defined and data.registro.check_climatizador == 'S' %} checked="checked" {% endif %} id="check-clima-resfriar">
+                            <label class="custom-control-label" for="check-clima-resfriar">Resfri Ar</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_clima_conc" value="S" {% if data.registro.check_clima_conc is defined and data.registro.check_clima_conc == 'S' %} checked="checked" {% endif %}  id="check-clima-outros">
+                            <label class="custom-control-label" for="check-clima-outros"> Outros</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <select class="form-control" name="clima_concorrente_id[]" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="clima_concorrente" multiple="multiple">
+                            <option>Selecione</option>
+                            {% if data.registro.clima_concorrentes is defined %}
+                                {% for conc in data.registro.clima_concorrentes %}
+                                    <option value="{{conc.Concorrente.id}}" selected="selected">
+                                        {{conc.Concorrente.descricao}}
+                                    </option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+                
+                <h5 class="mb-1"><strong>Rodoar</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_rodoar" value="S" {% if data.registro.check_rodoar is defined and data.registro.check_rodoar == 'S' %} checked="checked" {% endif %} id="check-rodoar-resfriar">
+                            <label class="custom-control-label" for="check-rodoar-resfriar">Resfri Ar</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} name="check_rodo_conc" value="S" {% if data.registro.check_rodo_conc is defined and data.registro.check_rodo_conc == 'S' %} checked="checked" {% endif %} id="check-rodoar-outros">
+                            <label class="custom-control-label" for="check-rodoar-outros">Outros</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <select class="form-control" name="rodoar_concorrente_id[]" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="rodoar_concorrente" multiple="multiple">
+                            <option>Selecione</option>
+                            {% if data.registro.rodoar_concorrentes is defined %}
+                                {% for conc in data.registro.rodoar_concorrentes %}
+                                    <option value="{{conc.Concorrente.id}}" selected="selected">
+                                        {{conc.Concorrente.descricao}}
+                                    </option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+
+                <h5 class="mb-1"><strong>Geladeiras</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" name="check_geladeira" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} value="S" class="custom-control-input" {% if data.registro.check_geladeira is defined and data.registro.check_geladeira == 'S' %} checked="checked" {% endif %} id="check-geladeiras-resfriar">
+                            <label class="custom-control-label" for="check-geladeiras-resfriar">Resfri Ar</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" name="check_gela_conc" value="S" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} {% if data.registro.check_gela_conc is defined and data.registro.check_gela_conc == 'S' %} checked="checked" {% endif %}class="custom-control-input" id="check-geladeiras-outros">
+                            <label class="custom-control-label" for="check-geladeiras-outros">Outros</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <select class="form-control" name="geladeira_concorrente_id[]" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} id="geladeira_concorrente" multiple="multiple">
+                            <option>Selecione</option>
+                            {% if data.registro.geladeira_concorrentes is defined %}
+                                {% for conc in data.registro.geladeira_concorrentes %}
+                                    <option value="{{conc.Concorrente.id}}" selected="selected">
+                                        {{conc.Concorrente.descricao}}
+                                    </option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+
+                <h5 class="mb-1"><strong>Material Publicitário</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-3">
+                        <label>Folder Quantidade</label>
+                        <input type="number" class="form-control" name="folder_qtde" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} {% if data.registro.folder_qtde is defined and data.registro.folder_qtde != null %} value="{{data.registro.folder_qtde}}"{% endif %}>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label>Catálogo Quantidade</label>
+                        <input type="number" class="form-control" name="catalogo_qtde" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} {% if data.registro.catalogo_qtde is defined and data.registro.catalogo_qtde != null %} value="{{data.registro.catalogo_qtde}}"{% endif %}>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label>Banner Quantidade</label>
+                        <input type="number" class="form-control" name="banner_qtde" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} {% if data.registro.banner_qtde is defined and data.registro.banner_qtde != null %} value="{{data.registro.banner_qtde}}"{% endif %} >
+                    </div>
+                </div>
+
+                <h5 class="mb-2"><strong>Observações Vendedor</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <textarea class="form-control" name="obs_vendedor" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} rows="8" maxlength="3999" required="required" style="resize:none;">{% if data.registro.obs_vendedor is defined and data.registro.obs_vendedor != null %}{{data.registro.obs_vendedor}}{% endif %}</textarea>
+                    </div>
+                </div> 
+
+                {% if data.setor == 'pos_vendas' or data.setor == 'admin' %}
+                <h5 class="mb-2"><strong>Observações Pós-Venda</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <textarea class="form-control" name="obs_pos_venda" maxlength="3999" rows="8" style="resize:none;">{% if data.registro.obs_pos_venda is defined and data.registro.obs_pos_venda != null %}{{data.registro.obs_pos_venda}}{% endif %}</textarea>
+                    </div>
+                </div>
+                {% endif %}
+
+                <h5 class="mb-2 mt-2"><strong>Anexos</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <input id="upload" {% if data.setor == 'pos_vendas' %} disabled="disabled" {% endif %} type="file" accept="image/gif, image/jpeg, image/png, , image/jpg" {% if data.registro.bloqueia_campos == '1' %} disabled="disabled" {% endif %} name="files[]" multiple>
+                            </div>
+
+                            {% if data.arquivos is defined and data.arquivos != null %}   
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">    
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th width="40%">Arquivo</th>
+                                                    <th width="40%">Data</th>
+                                                    <th width="20%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for file in data.arquivos %}
+                                                    <tr>
+                                                        <td>{{file.arquivo}}</td>
+                                                        <td>{{file.criado_em|date("d/m/Y H:m:i")}}</td>
+                                                        <td align="right">
+                                                            <a href="/comercial/relatorio-visitas/arquivos/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+                                                            {% if data.setor != 'pos_vendas' and  data.setor != 'admin' and data.registro.status_id != 2 %}
+                                                            <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-name="{{file.arquivo}}" title="Excluir" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                            {% elseif data.setor == 'admin' %}
+                                                            <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-name="{{file.arquivo}}" title="Excluir" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% else %}
+                                                    <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                   
+                    {% if data.permissao.permissao > 1 and data.registro.status_id != 2 and  data.setor != 'admin' %}
+                        {% if data.setor != 'coordenador' %}
+                            <button type="submit" id="btn-adicionar" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                                <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                            </button>
+                        {% elseif data.setor == 'coordenador' and (data.registro.criado_por == usuario.id or data.registro.id is not defined )%}
+                            <button type="submit" id="btn-adicionar" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                            </button>
+                        {% endif %}
+                    {% elseif data.setor == 'admin' %}
+                        <button type="submit" id="btn-adicionar" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+
+
+
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+
+
+                    {% if data.setor == 'pos_vendas' and data.registro.id is defined %}
+                        <a href="javascript:void(0);" class="btn btn-danger btn-sem-contato" data-id="{{data.registro.id}}">Não foi possível entrar em contato!</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <div class="modal fade modal-delete-arquivo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do Arquivo <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/{{data.modulo.url}}/excluir/arquivo" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="relatorio_id" value="{{data.registro.id}}">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript">
+        var hora_ini = '{{data.hora_ini}}',
+            hora_fim = '{{data.hora_fim}}',
+            setor = '{{data.setor}}',
+            rel_id = '',
+            tipo_rel = 'rede';
+    </script>
+{% endblock %}

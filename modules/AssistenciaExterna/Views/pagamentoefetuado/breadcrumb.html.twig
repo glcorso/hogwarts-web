@@ -1,0 +1,22 @@
+<!-- ============================================================== -->
+<!-- Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<div class="row page-titles">
+    <div class="col-md-5 col-8 align-self-center">
+        <h6 class="text-themecolor m-b-0 m-t-0">{{data.modulo.nome}}</h6>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/home">Dashboard</a>
+            </li>
+            {% if data.modulo.nome_pai != null %}
+            <li class="breadcrumb-item">
+                <a href="/{{data.modulo.url}}">{{data.modulo.nome_pai}}</a>
+            </li>
+        {% endif %}
+            <li class="breadcrumb-item active">{{data.modulo.nome}}</li>
+        </ol>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->

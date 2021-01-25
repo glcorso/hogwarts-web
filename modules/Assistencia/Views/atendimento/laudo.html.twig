@@ -1,0 +1,161 @@
+{% extends 'baseImprimir.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        @media print and (orientation: portrait) {
+            /* landscape styles */
+        }
+        @page { margin: 0; }
+        body { margin: 1cm; }
+    </style>
+    <style type="text/css">
+        table { page-break-inside:auto }
+        thead { display:table-row-group }
+        tfoot { display:table-footer-group }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+   
+{% endblock %}
+
+{% block title %}Portal Resfri Ar | Powered By Lidere Sistemas{% endblock %}
+
+{% block content %}
+
+        <div class="col-lg-12">
+            <div class="row" style="margin-top:50px;">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <img src="/images/{{empresa.diretorio}}/logo-login.png" width="60%">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="text-left">
+                        <h4><strong class="text-center">Laudo de Análise - Protocolo #{{data.registro.protocolo}}</strong></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:50px;margin-left:10px;">
+                 {% if data.registro.num_chamado != null %}
+                 <div class="col-md-4">  
+                    <div class="form-group">
+                        <strong><p>Chamado</p></strong>
+                        <p style="background-color:#d8d8d8;">{{data.registro.num_chamado}}</p>
+                    </div>
+                </div>
+
+                <div class="col-md-8">  
+                </div>
+                {% endif %}
+                <div class="col-md-4">  
+                    <div class="form-group">
+                        <strong><p>Razão Social</p></strong>
+                        {% if data.registro.cliente_envio_id != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.descricao_cli_env}}</p>
+                        {% elseif data.registro.descricao_cli_origem != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.descricao_cli_origem}}</p>
+                        {% else %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.cliente}}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-2">  
+                     <div class="form-group">
+                        <strong><p>Telefone</p></strong> 
+                        {% if data.registro.telefone_cli_envio != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.telefone_cli_envio}}</p> 
+                        {% elseif data.registro.telefone_cli_origem != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.telefone_cli_origem}}</p> 
+                        {% else %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.telefone}}</p> 
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-3">  
+                     <div class="form-group">
+                        <strong><p>Cidade</p></strong> 
+                        {% if data.registro.cidade_cli_envio != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.cidade_cli_envio}}</p> 
+                        {% elseif data.registro.cidade_cli_origem != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.cidade_cli_origem}}</p> 
+                        {% else %}
+                            <p style="background-color:#d8d8d8;"> - </p> 
+                        {% endif %}
+                   </div>
+                </div>
+                <div class="col-md-3">  
+                     <div class="form-group">
+                        <strong><p>UF</p></strong> 
+                        {% if data.registro.uf_cli_envio != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.uf_cli_envio}}</p> 
+                        {% elseif data.registro.uf_cli_origem != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.uf_cli_origem}}</p> 
+                        {% else %}
+                            <p style="background-color:#d8d8d8;"> - </p> 
+                        {% endif %}
+                   </div>
+                </div>
+                <div class="col-md-6">  
+                    <div class="form-group">
+                        <strong><p>Modelo</p></strong>
+                        <p style="background-color:#d8d8d8;">{{data.registro.cod_item}} - {{data.registro.desc_tecnica}}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">  
+                     <div class="form-group">
+                        <strong><p>Dt. Fabricação</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.dt_fabricacao|date('d/m/Y')}}</p> 
+                    </div>
+                </div>
+                <div class="col-md-3">  
+                     <div class="form-group">
+                        <strong><p>Número de Série</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.serie}}</p> 
+                   </div>
+                </div>
+
+                <div class="col-md-12">  
+                     <div class="form-group">
+                        <strong><p>Problema Relatado</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.obs_cliente}}</p> 
+                   </div>
+                </div>
+
+                <div class="col-md-12">  
+                     <div class="form-group">
+                        <strong><p>Problema Constatado</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.cod_defeito_tecnico}} - {{data.registro.desc_defeito_tecnico}}</p> 
+                   </div>
+                </div>
+
+                <div class="col-md-12">  
+                     <div class="form-group">
+                        <strong><p>Conserto</p></strong> 
+                        {% for atend in data.registro.atendimentos %}
+                            <p style="background-color:#d8d8d8;">{{atend.atendimento}}</p> 
+                        {% endfor %}
+                   </div> 
+                </div>
+
+                <div class="col-md-12">  
+                     <div class="form-group">
+                        <strong><p>Imagem</p></strong> 
+                        <p class="text-center"><img src="/arquivos/assistencia_tecnica/laudos/{{data.arquivo_laudo.arquivo}}"></p>
+                   </div>
+                </div>
+                  
+            </div>
+        </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function () { window.print(); });
+</script>
+{% endblock %}

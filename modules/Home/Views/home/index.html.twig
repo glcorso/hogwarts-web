@@ -1,0 +1,187 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+{% if data.usuario.tipo == 'ate' %}
+<div class="row">
+    <div class="col-lg-12">
+	    <div class="card card-outline-info">
+	        <div class="card-body">
+	            <div class="row mt-1">
+	                <div class="col-md-12">
+	                	<h4>Olá <strong>{{data.usuario.nome}}</strong>,</h4>
+	                	<h4>Bem-vindo ao <strong>Portal Resfri Ar</strong>!</h4> 
+	                	<h4>Você pode acessar os módulos utilizando o menu lateral.</h4>
+	               </div>
+	            </div>
+	        </div>
+	    </div>
+	 </div>
+</div>	
+
+{% endif %}
+
+{% if data.avisos is not empty  %}
+ <div class="row">
+    <div class="col-lg-12">
+	    <div class="card card-outline-info">
+	        <div class="card-header">
+	            <h4 class="m-b-0 text-white">Mural de Avisos</h4>
+	        </div>
+	        <div class="card-body">
+	            <div class="row mt-1">
+	                <div class="col-md-12">
+	                    <div class="form-group">
+
+	                    	{% for aviso in data.avisos %}
+	                    		<hr>
+	                    		<div class="row">
+		                    		<div class="col-md-8">
+			                    		
+			                    		<strong style="font-weight: bold!important;">#{{aviso.codigo}} - {{aviso.descricao}}</strong>
+			                    		
+		                    		</div>
+		                    		<div class="col-md-4 text-right">
+			                    		
+			                    		<strong  style="font-weight: bold!important;">{{aviso.criado_em|date('d/m/Y')}}</strong>
+			                    		
+		                    		</div>
+	                    		</div>
+	                    		<hr>
+	                    		<div style="margin-left: 10px;" class="form-group">
+	                    			<p>{{aviso.texto|raw}}</p>
+	                    		</div>
+	                    		{% if aviso.arquivos is not empty  %}
+		                    	<div class="table-responsive">
+	                                <table class="table table-hover table-striped">
+	                                    <thead>
+	                                        <tr>
+	                                            <th width="80%">Arquivo</th>
+	                                            <th width="20%"></th>
+	                                        </tr>
+	                                    </thead>
+	                                    <tbody>
+	                                        {% for file in aviso.arquivos %}
+	                                            <tr>
+	                                                <td>{{file.arquivo}}</td>
+	                                                <td align="right">
+	                                                    <a href="/home/arquivos/aviso/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+	                                                </td>
+	                                            </tr>
+	                                        {% else %}
+	                                            <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+	                                        {% endfor %}
+	                                    </tbody>
+	                                </table>
+	                            </div>
+	                        	{% endif %}
+
+                        	{% endfor %}
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+{% endif %}
+
+{% if data.usuario.tipo == 'ate' %}
+
+	{% if data.arquivos_lista is defined and data.arquivos_lista != null %}
+	 <div class="row">
+	    <div class="col-lg-12">
+		    <div class="card card-outline-info">
+		        <div class="card-header">
+		            <h4 class="m-b-0 text-white">Lista de Preço Assistência Externa</h4>
+		        </div>
+		        <div class="card-body">
+		            <div class="row mt-1">
+		                <div class="col-md-12">
+		                    <div class="form-group">
+		                    	<div class="table-responsive">
+	                                <table class="table table-hover table-striped">
+	                                    <thead>
+	                                        <tr>
+	                                            <th width="80%">Arquivo</th>
+	                                            <th width="20%"></th>
+	                                        </tr>
+	                                    </thead>
+	                                    <tbody>
+	                                        {% for file in data.arquivos_lista %}
+	                                            <tr>
+	                                                <td>{{file.arquivo}}</td>
+	                                                <td align="right">
+	                                                    <a href="/home/arquivos/lista-preco/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+	                                                </td>
+	                                            </tr>
+	                                        {% else %}
+	                                            <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+	                                        {% endfor %}
+	                                    </tbody>
+	                                </table>
+	                            </div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</div>
+	{% endif %} 
+{% endif %}
+
+{% if data.arquivos is defined and data.arquivos != null %}
+ <div class="row">
+    <div class="col-lg-12">
+	    <div class="card card-outline-info">
+	        <div class="card-header">
+	            <h4 class="m-b-0 text-white">Meus Contratos</h4>
+	        </div>
+	        <div class="card-body">
+	            <div class="row mt-1">
+	                <div class="col-md-12">
+	                    <div class="form-group">
+	                    	<div class="table-responsive">
+                                <table class="table table-hover table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th width="80%">Arquivo</th>
+                                            <th width="20%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for file in data.arquivos %}
+                                            <tr>
+                                                <td>{{file.arquivo}}</td>
+                                                <td align="right">
+                                                    <a href="/home/arquivos/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+                                                </td>
+                                            </tr>
+                                        {% else %}
+                                            <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>
+
+{% endif %}
+
+
+{% endblock principal %}
+
+{% block javascripts %}
+   {{parent()}}
+{% endblock %}

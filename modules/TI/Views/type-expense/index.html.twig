@@ -1,0 +1,97 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success}}
+        </div>
+    {% endif %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error}}
+        </div>
+    {% endif %}
+
+    <div class="btn-table-up">
+        <div class="row">
+            <div class="col-lg-10">
+            </div>
+            <div class="col-lg-2">
+                {#% if data.permissao.permissao > 1 %#}
+                    <div class="text-right btn-table-up">
+                        <a class="btn btn-default btn-success" href="/ti/type-expenses/form"><i class="fa fa-plus"></i> Adicionar</a>
+                    </div>
+                {#% endif %#}
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Status</th>
+                            <th width="80"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in expenses %}
+                            <tr>
+                                <td><a href="/ti/type-expenses/form/{{row.id}}">{{row.name}}</a></td>
+                                <td>{% if row.status == 'ON' %}<span class="label bg-success">Ativo</span>{% else %}<span class="label bg-danger">Inativo</span>{% endif %}</td>
+                                <td>
+                                    <div>
+                                        <a href="/ti/type-expenses/form/{{row.id}}" class="btn btn-default btn-xs" title="Editar"><i class="fa fa-pencil"></i></a>
+                                        {% if row.tickets|length == 0 %}
+                                            <a href="javascript:void(0);" class="btn-delete-modal-ch" data-id="{{row.id}}" data-name="{{row.name}}" title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="3" align="center">Nenhum registro encontrado. </td> </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do tipo de despesa <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/ti/type-expenses/delete" method="post">
+                        <input type="hidden" name="id" value="">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-form-modal btn-success" data-loading-text="Processando...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

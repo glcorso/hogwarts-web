@@ -1,0 +1,81 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <div class="card card-outline-info">
+        <div class="card-header">
+            <h4 class="m-b-0 text-white">Tipos de Horas</h4>
+        </div>
+        <div class="card-body">
+
+
+        <form action="/ti/type-hours/form" method="post" role="form" class="main-form p-bottom-40">
+        
+    
+
+            {% if hour.id is defined %}
+                <input type="hidden" name="id" value="{{hour.id}}">
+            {% endif %}
+
+            <div class="form-group">
+                <label>Nome*</label>
+                <input type="text" name="name" class="form-control" placeholder="Informe o nome" value="{% if hour.name is defined %}{{hour.name}}{% endif %}" data-myrules="required">
+            </div>
+
+            <div class="form-group">
+                <label>Valor Padrão*</label>
+                <div class="input-group">
+                    <span class="input-group-addon">R$</span>
+                    <input type="text" name="value" class="form-control" placeholder="Informe o valor padrão" value="{% if hour.value is defined %}{{ hour.value }}{% endif %}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Gera Faturamento</label>
+                <select name="billing" class="form-control">
+                    <option value="ON" {% if hour.billing is defined and hour.billing == 'ON' %} selected="selected" {% endif %}>Sim</option>
+                    <option value="OFF" {% if hour.billing is defined and hour.billing == 'OFF' %} selected="selected" {% endif %}>Não</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Considera em Metas</label>
+                <select name="goal" class="form-control">
+                    <option value="ON" {% if hour.goal is defined and hour.goal == 'ON' %} selected="selected" {% endif %}>Sim</option>
+                    <option value="OFF" {% if hour.goal is defined and hour.goal == 'OFF' %} selected="selected" {% endif %}>Não</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="ON" {% if hour.status is defined and hour.status == 'ON' %} selected="selected" {% endif %}>Ativo</option>
+                    <option value="OFF" {% if hour.status is defined and hour.status == 'OFF' %} selected="selected" {% endif %}>Inativo</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-default btn-success margin-r-15"><i class="fa fa-check"></i> {% if hour.id is defined %} Editar {% else %} Adicionar {% endif %}</button>
+            <a href="/ti/type-hours" class="btn btn-secondary">Cancelar</a>
+        
+       
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript">
+        $('input[name="value"]').maskMoney({thousands:'.', decimal:',', affixesStay: false, allowZero: true});
+    </script>
+{% endblock %}

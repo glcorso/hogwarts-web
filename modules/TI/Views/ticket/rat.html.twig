@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title> Portal de Chamados {% block title %}{% endblock %}</title>
+
+{% block meta %}
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+    <link href="/stylesheets/print.css" rel="stylesheet" type="text/css">
+    <link href="/images/favicon.ico" rel="shortcut icon">
+{% endblock %}
+
+</head>
+<body>
+
+    <table border="0" width="700">
+        <tr>
+            <td><img src="/images/{{empresa.diretorio}}/logo-login.png" width="120"></td>
+            <td align="center"><h4>Relatório de Atendimento Nro. <strong>{{ticket.id}}</strong></h4></td>
+            <td align="right">{{ "now"|date("d/m/Y") }}<br>{{ "now"|date("H:i") }}</td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <strong>Solicitação: </strong>{{ticket.title}}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <strong>Cliente: </strong>{{ticket.company_name}}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <table width="100%">
+                    <tr>
+                        <td><strong>Horas Trabalhadas:</strong> {{total_hours}}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <table width="100%" style="margin-top: 20px;">
+                    <tr style="border-bottom: solid 2px #ccc;">
+                        <th>Data</th>
+                        <th>Início</th>
+                        <th>Fim</th>
+                        <th>Total</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                    </tr>
+                    {% for called in calleds %}
+                        <tr style="border-bottom: solid 1px #ccc">
+                            <td width="90">{{called.date}}</td>
+                            <td width="60">{% if called.hour_start != null %} {{called.hour_start}} {% else %} - {% endif %}</td>
+                            <td width="60">{% if called.hour_finish != null %} {{called.hour_finish}} {% else %} - {% endif %}</td>
+                            <td width="60">{{called.hour_total}}</td>
+                            <td width="170">{{called.hour_name}}</td>
+                            <td>{{called.description|raw}}</td>
+                        </tr>
+                        <tr><td height="6"></td></tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <table width="100%" style="margin-top: 80px;">
+                    <tr>
+                        <td width="60%">
+                            Técnico<br><br>
+                            __________________________________<br><strong>{{calleds[0].user_name}}</strong>
+                        </td>
+                        <td>
+                            Cliente<br><br>
+                            _________________________________________<br><strong>{{ticket.company_name}}</strong>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

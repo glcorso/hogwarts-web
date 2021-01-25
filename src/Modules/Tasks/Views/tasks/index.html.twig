@@ -1,0 +1,119 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.warning is defined %}
+        <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.warning|raw}}
+        </div>
+    {% endif %}
+
+    <div class="btn-table-up">
+        <div class="row">
+            <div class="col-lg-10">
+            </div>
+            {% if data.permissao.permissao > 1 %}
+                <div class="col-lg-2">
+                    <a class="btn btn-block btn-success" href="/{{data.modulo.url}}/adicionar"><i class="fa fa-plus"></i> Adicionar</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th>Descrição</th>
+                        <th>Tarefa</th>
+                        <th>Cron</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data.resultado %}
+                        <tr>
+                            <td>
+                                {{row.id}}
+                            </td>
+                            <td>
+                                {{row.description}}
+                            </td>
+                            <td>
+                                {{row.job}}
+                            </td>
+                            <td>
+                                {{row.minute}} {{row.hour}} {{row.day}} {{row.month}} {{row.weekday}}
+                            </td>
+                            <td align="right">
+                                <a href="/{{data.modulo.url}}/editar/{{row.id}}" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-pencil text-inverse m-r-10"></i></a>
+                                {% if data.permissao.permissao > 2 %}
+                                    <a href="javascript:void(0);" class="btn-delete-modal" data-id="{{row.id}}" data-name="{{row.codigo}} - {{row.nome}}"  data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5" align="center">Nenhum registro encontrado.</td></tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if data.paginacao is defined and data.paginacao != null %}
+        <div class="row">
+            {% if data.paginacao.qtde != null %}
+                <div class="col-lg-4"><small>{{data.paginacao.qtde|raw}}</small></div>
+            {% endif %}
+            <div class="col-lg-8 text-align-right">{{data.paginacao.paginacao|raw}}</div>
+        </div>
+    {% endif %}
+
+    <div class="modal fade modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do registro ?
+                </div>
+                <div class="modal-footer">
+                    <form action="/{{data.modulo.url}}" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

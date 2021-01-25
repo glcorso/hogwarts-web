@@ -1,0 +1,81 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-perfil">
+
+           
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Perfil</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Perfil*</label>
+                            <input type="text" name="perfil" class="form-control" placeholder="Informe uma descrição para o perfil" value="{% if data.registro.perfil is defined %}{{data.registro.perfil}}{% endif %}" data-myrules="required" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label>Status*</label>
+                            <select name="situacao" class="form-control" data-myrules="required">
+                                <option value="ativo" {% if data.registro.situacao is defined and data.registro.situacao == 'ativo' %} selected="selected" {% endif %}>Ativo</option>
+                                <option value="inativo" {% if data.registro.situacao is defined and data.registro.situacao == 'inativo' %} selected="selected" {% endif %}>Inativo</option>
+                            </select>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+
+        {% if data.registro.id is defined %}
+            <div class="card card-outline-info">
+                <div class="card-header">
+                    <h4 class="m-b-0 text-white">Permissões</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        {{data.permissions|raw}}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

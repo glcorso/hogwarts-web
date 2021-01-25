@@ -1,0 +1,55 @@
+
+CREATE SEQUENCE  "SEQ_PAGAMENTO"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1
+/
+  CREATE OR REPLACE EDITIONABLE TRIGGER "TG_SEQ_PAGAMENTO"
+   before insert on "TSDI_PAGAMENTO"
+   for each row
+begin
+   if inserting then
+      if :NEW."ID" is null then
+         select SEQ_PAGAMENTO.nextval into :NEW."ID" from dual;
+      end if;
+   end if;
+end;
+/
+
+ALTER TRIGGER "TG_SEQ_PAGAMENTO" ENABLE
+/
+
+
+
+CREATE SEQUENCE  "SEQ_PAGAMENTO_ORDEM"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 47;
+/
+
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "TG_SEQ_PAGAMENTO_ORDEM"
+   before insert on "TSDI_PAGAMENTO_ORDEM"
+   for each row
+begin
+   if inserting then
+      if :NEW."ID" is null then
+         select SEQ_PAGAMENTO_ORDEM.nextval into :NEW."ID" from dual;
+      end if;
+   end if;
+end;
+
+
+ALTER TRIGGER "TG_SEQ_PAGAMENTO_ORDEM" ENABLE;
+/
+
+CREATE SEQUENCE  "SEQ_PAGAMENTO_ARQUIVO"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1;
+/
+
+  CREATE OR REPLACE EDITIONABLE TRIGGER "TG_SEQ_PAGAMENTO_ARQ"
+   before insert on "TSDI_PAGAMENTO_ARQUIVO"
+   for each row
+begin
+   if inserting then
+      if :NEW."ID" is null then
+         select SEQ_PAGAMENTO_ARQUIVO.nextval into :NEW."ID" from dual;
+      end if;
+   end if;
+end;
+/
+
+ALTER TRIGGER "TG_SEQ_PAGAMENTO_ARQ" ENABLE;

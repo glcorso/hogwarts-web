@@ -1,0 +1,78 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-usuario">
+
+           
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Vínculo de Vendedores</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Vendedor Interno *</label>
+                            <select name="int_usuario_id" class="form-control">
+                                <option></option>
+                                {% for vendedor_interno in data.usuarios %}
+                                    <option value="{{vendedor_interno.id}}" {% if data.registro.int_usuario_id  is defined and data.registro.int_usuario_id == vendedor_interno.id %} selected="selected" {% endif %}>{{vendedor_interno.nome}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Vendedor Externo *</label>
+                            <select name="ext_usuario_id" class="form-control">
+                                <option></option>
+                                {% for vendedor_externo in data.usuarios %}
+                                    <option value="{{vendedor_externo.id}}" {% if data.registro.ext_usuario_id is defined and data.registro.ext_usuario_id == vendedor_externo.id %} selected="selected" {% endif %}>{{vendedor_externo.nome}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

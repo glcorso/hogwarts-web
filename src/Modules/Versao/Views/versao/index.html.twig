@@ -1,0 +1,42 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {
+        'modulos' : data.modulo
+    } %}
+{% endblock %}
+
+{% block principal %}
+    <div class="card">
+        <div class="card-heading">
+            <h2>Versão {{v}}</h2>
+        </div>
+        <div class="card-body">
+            <div class="">
+                <div class="streamline b-l m-b">
+                    {% for commit in data.commits %}
+                        {% set color = '' %}
+                        {% if 'commit' in commit.action %}
+                            {% set color = 'b-success' %}
+                        {% elseif 'pull' in commit.action %}
+                            {% set color = 'b-info' %}
+                        {% elseif 'merge' in commit.action %}
+                            {% set color = 'b-warning' %}
+                        {% endif %}
+                        <div class="sl-item {{color}}">
+                            <div class="sl-content">
+                                <div class="text-muted-dk">{{commit.pubDate|date('m/d/Y')}}</div>
+                                <p>{{commit.action}} - {{commit.description}}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

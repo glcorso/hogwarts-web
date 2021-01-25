@@ -1,0 +1,174 @@
+{% extends 'baseImprimir.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style type="text/css">
+        @media print and (orientation: portrait) {
+            /* landscape styles */
+        }
+        @page { margin: 0; }
+        body { margin: 1cm; font-size: .9rem; }
+        h4 {font-size: 1.2rem}
+        h5 {font-size: 1rem; margin: .1rem 0 .1rem 0;}
+        @page {
+         /* size: A4;*/
+          margin: 11mm;
+        }
+        @media print {
+            .voltar {
+                display:none;
+            }
+
+        }
+    </style>
+    <style type="text/css">
+        table { page-break-inside:auto }
+        thead { display:table-row-group }
+        tfoot { display:table-footer-group }
+        .pagebreak { page-break-before: always; }
+        .b-all {border: 2px solid black; page-break-inside: avoid;}
+        .b-top {border-top: 1px solid black}
+        .b-bottom {border-bottom: 1px solid black}
+        .b-left {border-left: 1px solid black}
+        .b-rigth {border-right: 1px solid black}
+        .m-top {margin-top:50px;}
+        .m-bot {margin-bottom:6px;}
+        .cinza {background-color: #d8d8d8;}
+        .assinatura {padding: 0 20px 20px 20px; border-bottom: 1px solid black; margin: 40px 150px 20px 150px;}
+        .declaracao {height: 7rem;}
+        .text-center-center {align-self: center;}
+    </style>
+
+
+{% endblock %}
+
+{% block title %}Portal Resfri ar | Powered By Lidere Sistemas{% endblock %}
+
+{% block content %}
+        <div class="pagebreak">
+            <div class="voltar" >
+                <a href="/assistencia-externa/pagamento-efetuado">
+                    <h5>Voltar</h5>
+                </a>
+            </div>
+            <div class="col-lg-12">
+                <div class="row m-top m-bot b-all" >
+                   <div class="col-4">
+                        <div class="text-left" style="margin:10px;">
+                            <img src="/images/{{empresa.diretorio}}/logo-login.png" width="50%">
+                        </div>
+                    </div>
+                    <div class="col-8 text-center">
+                        <div class="col-8">
+                            <h4 style="margin:10px;"><strong>AUTORIZAÇÃO DE PAGAMENTO DE ORDENS DE SERVIÇO</strong></h4>
+                        </div>
+                    </div>
+
+                    <div class="col-5 b-top cinza">
+                        N° do Pagamento:  {{data.registro.num_pgto}}
+                    </div>
+                    <div class="col-7 b-top cinza">
+                        Data e Hora da Emissão: {{d|date('d/m/Y H:i:s')}}
+                    </div>
+                </div>
+
+                <div class="row m-bot b-all" >
+                    <div class="col-12 text-center cinza">
+                        <h5><strong class="">DADOS DO POSTO AUTORIZADO</strong></h5>
+                    </div>
+                    <div class="col-6 b-rigth b-top">
+                        Razão Social:  {{data.registro.assistencia.cliente_erp_descricao}}
+                    </div>
+                    <div class="col-6 b-top">
+                        CNPJ: {{data.registro.dados_assistencia.cpf_cnpj_format}}
+                    </div>
+                    <div class="col-9 b-rigth b-top">
+                        Endereço:{{data.registro.dados_assistencia.endereco}}
+                    </div>
+                    <div class="col-3 b-top">
+                        N°: {{data.registro.dados_assistencia.nro}}
+                    </div>
+                    <div class="col-6 b-rigth b-top">
+                        Bairro: {{data.registro.dados_assistencia.bairro}}
+                    </div>
+                    <div class="col-6 b-top">
+                        Cidade: {{data.registro.dados_assistencia.cidade}}
+                    </div>
+                    <div class="col-6 b-rigth b-top">
+                        CEP: {{data.registro.dados_assistencia.cep}}
+                    </div>
+                    <div class="col-6 b-top">
+                        Estado: {{data.registro.dados_assistencia.uf}}
+                    </div>
+                    <div class="col-6 b-rigth b-top">
+                        Nome do Técnico: {{data.registro.assistencia.nome}}
+                    </div>
+                    <div class="col-6 b-top">
+                    </div>
+                </div>
+
+                <div class="row m-bot b-all text-center" >
+                    <div class="col-12 cinza">
+                        <h5><strong>ORDENS</strong></h5>
+                    </div>
+                    <div class="col-6 b-rigth b-top">
+                        <strong>ORDEM - CLIENTE </strong>
+                    </div>
+                    <div class="col-4 b-rigth b-top">
+                        <strong>DATA</strong>
+                    </div>
+                    <div class="col-2 b-top">
+                        <strong>VALOR</strong>
+                    </div>
+                    {% for ordem in data.registro.ordens %}
+                        <div class="col-6 b-rigth b-top text-left cinza">
+                             {{ordem.ordem}} - {{ordem.nome}}
+                        </div>
+                        <div class="col-4 b-rigth b-top text-left cinza">
+                             {{ordem.criado_em}}
+                        </div>
+                        <div class="col-2 b-top text-right cinza">
+                             R$ {{ordem.valor|number_format('2',',','.')}}
+                        </div>
+                        {% for servico in ordem.servicos %}
+                            <div class="col-12 b-rigth b-top text-left "  >
+                                <i style="margin-left:20px;"> {{servico.cod_serv}} - {{servico.desc_serv}} </i>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    <div class="col-10 b-rigth b-top text-left">
+                        <strong>VALOR TOTAL</strong>
+                    </div>
+                    <div class="col-2 b-top text-right">
+                         R$ {{data.registro.valor_total|number_format('2',',','.')}}
+                    </div>
+                </div>
+
+                <div class="row m-bot b-all text-center" >
+                    <div class="col-12 cinza">
+                        <h5><strong>AUTORIZAÇÃO</strong></h5>
+                    </div>
+                    <div class="col-12 b-rigth b-top">
+                        <div>
+                            {{data.registro.texto_autorizacao}}
+                        </div>
+                        <div class="assinatura" >
+                            Assinatura
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function () { window.print(); });
+</script>
+{% endblock %}

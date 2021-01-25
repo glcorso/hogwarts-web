@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+
+<div class="app">
+   <div class="center-block w-xxl w-auto-xs p-v-md">
+      <div class="navbar">
+         <div class="navbar-brand login m-t-lg text-center">
+            <span class="inline"><img src="/images/{{empresa.diretorio}}/logo-login.png"></span>
+         </div>
+      </div>
+      <div class="p-lg panel md-whiteframe-z1 text-color m">
+         <div class="m-b">
+            Esqueceu a senha?
+            <p class="text-xs m-t">Insira seu e-mail abaixo para receber uma nova senha de acesso ao Portal.</p>
+         </div>
+         <form action="/forgot" name="form" class="form" method="post">
+            <div class="md-form-group float-label">
+               <input type="text" name="email" class="md-input" data-myrules="required">
+               <label>E-mail</label>
+            </div>
+            <div class="m-b-md">
+               <label class="form-success-message {% if flash.success is not defined %} hidden {% endif %}">{{flash.success}}</label>
+                <label class="form-error-message {% if flash.error is not defined %} hidden {% endif %}">{{flash.error}}</label>
+            </div>
+            <button md-ink-ripple type="submit" class="md-btn md-raised blue btn-block p-h-md m-t-sm btn-submit">Enviar</button>
+         </form>
+      </div>
+      <div class="text-center">
+         <div><a href="/login" class="md-btn normal-font">Voltar para a tela de login</a></div>
+      </div>
+   </div>
+</div>
+
+{% endblock %}

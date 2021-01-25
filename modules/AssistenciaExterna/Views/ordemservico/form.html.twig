@@ -1,0 +1,698 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+    <style type="text/css">
+        a.disabled {
+          pointer-events: none;
+          cursor: default;
+        }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link {% if data.registro.id == null %} active {% endif %}" data-toggle="tab" href="#atendimento"> <h6><strong>Atendimento</strong></h6></a>
+            </li>
+            <li class="nav-item {% if data.registro.id == null %} disabled {% endif %}" >
+                <a class="nav-link {% if data.registro.id != null and data.registro.status_id == 1 %} active {% elseif data.registro.id == null %} disabled {% endif %}" {% if not data.registro.id == null %}data-toggle="tab" {% endif %} href="#analise"><h6><strong>Análise Técnica</strong></h6></a>
+            </li>
+            <li class="nav-item {% if data.registro.id == null %} disabled {% endif %} ">
+                <a class="nav-link {% if data.registro.id != null and ( data.registro.status_id == 2 or data.registro.status_id == 4) %} active {% elseif data.registro.id == null or data.registro.status_id <= 1 %} disabled {% endif %}" {% if not data.registro.id == null %}data-toggle="tab" {% endif %} href="#aprovacao"><h6><strong>Aprovação</strong></h6></a>
+            </li>
+            <li class="nav-item {% if data.registro.id == null or data.registro.status_id <= 2 or data.registro.status_id == 4 %} disabled {% endif %} ">
+                <a class="nav-link {% if data.registro.id != null and ( data.registro.status_id > 2 and data.registro.status_id <= 9) and ( data.registro.status_id != 4) %} active {% elseif data.registro.id == null or data.registro.status_id <= 2 or data.registro.status_id == 4 %} disabled {% endif %}" {% if not data.registro.id == null %}data-toggle="tab" {% endif %} href="#conclusao"><h6><strong>Conclusão</strong></h6></a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+            <div class="card card-outline-info tab-pane container {% if data.registro.id == null %} active {% endif %}" style="max-width: none;" id="atendimento">
+                <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-at-externa" enctype="multipart/form-data">
+                <div class="card-body">
+
+                    <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                    {% if data.registro.id is defined %}
+                        <input type="hidden" name="id" value="{{data.registro.id}}">
+                        <input type="hidden" name="_METHOD" value="PUT"/>
+                    {% endif %}
+
+                    <h3 class="mb-3"><strong>Dados do Cliente</strong></h3>
+                    <hr class="mb-4">
+                    {% set disabled_atendimento = '' %}
+                    {% set esconde_botoes_atendimento = false %}
+                    {% set disabled_assistencia = '' %}
+                    {% set esconde_botoes_assistencia = false %}
+
+                    {% if data.registro.bloqueio_status is defined and data.registro.bloqueio_status == 'ATENDIMENTO'%}
+                        {% set disabled_atendimento = 'disabled="disabled"' %}
+                        {% set esconde_botoes_atendimento = true %}
+                    {% elseif  data.registro.bloqueio_status is defined and data.registro.bloqueio_status == 'ASSISTENCIA' %}
+                        {% set disabled_atendimento = 'disabled="disabled"' %}
+                        {% set esconde_botoes_atendimento = true %}
+                        {% set disabled_assistencia = 'disabled="disabled"' %}
+                        {% set esconde_botoes_assistencia = true %}
+                    {% endif %}
+
+
+                    <div class="row">
+
+                        <div class="col-lg-5">
+                            <div class="form-group">
+                                <label>CPF / CNPJ*</label>
+                                <input type="text" name="cpf_cnpj" class="form-control" {{disabled_atendimento}}  maxlength="18" id="campo-cpf-cnpj" value="{{data.registro.cpf_cnpj}}" />
+                                <input type="hidden" name="cliente_assistencia_id" id="campo-cliente-assistencia-id">
+                            </div>
+                        </div>
+                         <div class="col-lg-7">
+                            <div class="form-group">
+                                <label>Nome / Razão Social *</label>
+                                <input type="text" name="nome" class="form-control" {{disabled_atendimento}} maxlength="350" required="required" id="campo-nome-cliente" value="{{data.registro.nome_cliente}}" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="mb-4">
+                    <h3 class="mb-3"><strong>Contato</strong></h3>
+                    <hr class="mb-4">
+
+                    <div class="row">
+
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Telefone *</label>
+                                <input type="text" name="telefone_celular" {{disabled_atendimento}} id="telefone" class="form-control celular" required="required" value="{{data.registro.telefone}}" />
+                            </div>
+                        </div>
+                         <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>E-mail </label>
+                                <input type="email" name="e_mail" id="e_mail" {{disabled_atendimento}} class="form-control" maxlength="100" value="{{data.registro.e_mail}}" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="mb-4">
+                    <h3 class="mb-3"><strong>Endereço</strong></h3>
+                    <hr class="mb-4">
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>CEP *</label>
+                                <input type="text" name="cep" class="form-control" {{disabled_atendimento}} id="cep" required="required" value="{{data.registro.cep}}" />
+                                <small><a href="javascript:void(0);" class="link" id="link-nao-sei-cep"> Não sei o CEP </a></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Endereço *</label>
+                                <input type="text" name="endereco" class="form-control" {{disabled_atendimento}} id="endereco" maxlength="350"  required="required" value="{{data.registro.endereco}}" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label>Número *</label>
+                                <input type="text" name="nro" class="form-control" {{disabled_atendimento}} id="numero" maxlength="30" required="required" value="{{data.registro.nro}}" />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Complemento </label>
+                                <input type="text" name="complemento" {{disabled_atendimento}} id="complemento" class="form-control" maxlength="100" value="{{data.registro.complemento}}" />
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>Bairro *</label>
+                                <input type="text" name="bairro" {{disabled_atendimento}} id="bairro" class="form-control" maxlength="100" required="required" value="{{data.registro.bairro}}" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                <label>Cidade *</label>
+                                <input type="text" name="cidade" {{disabled_atendimento}} id="cidade" class="form-control" maxlength="150" required="required" value="{{data.registro.cidade}}" />
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>Estado*</label>
+                                <select name="uf" class="form-control" {{disabled_atendimento}} id="uf" required="required">
+                                    <option value=""></option>
+                                    <option value="AC" {% if data.registro.uf is defined and data.registro.uf == 'AC' %} selected="selected" {% endif %}>Acre</option>
+                                    <option value="AL" {% if data.registro.uf is defined and data.registro.uf == 'AL' %} selected="selected" {% endif %}>Alagoas</option>
+                                    <option value="AP" {% if data.registro.uf is defined and data.registro.uf == 'AP' %} selected="selected" {% endif %}>Amapá</option>
+                                    <option value="AM" {% if data.registro.uf is defined and data.registro.uf == 'AM' %} selected="selected" {% endif %}>Amazonas</option>
+                                    <option value="BA" {% if data.registro.uf is defined and data.registro.uf == 'BA' %} selected="selected" {% endif %}>Bahia</option>
+                                    <option value="CE" {% if data.registro.uf is defined and data.registro.uf == 'CE' %} selected="selected" {% endif %}>Ceará</option>
+                                    <option value="DF" {% if data.registro.uf is defined and data.registro.uf == 'DF' %} selected="selected" {% endif %}>Distrito Federal</option>
+                                    <option value="ES" {% if data.registro.uf is defined and data.registro.uf == 'ES' %} selected="selected" {% endif %}>Espírito Santo</option>
+                                    <option value="GO" {% if data.registro.uf is defined and data.registro.uf == 'GO' %} selected="selected" {% endif %}>Goiás</option>
+                                    <option value="MA" {% if data.registro.uf is defined and data.registro.uf == 'MA' %} selected="selected" {% endif %}>Maranhão</option>
+                                    <option value="MT" {% if data.registro.uf is defined and data.registro.uf == 'MT' %} selected="selected" {% endif %}>Mato Grosso</option>
+                                    <option value="MS" {% if data.registro.uf is defined and data.registro.uf == 'MS' %} selected="selected" {% endif %}>Mato Grosso do Sul</option>
+                                    <option value="MG" {% if data.registro.uf is defined and data.registro.uf == 'MG' %} selected="selected" {% endif %}>Minas Gerais</option>
+                                    <option value="PA" {% if data.registro.uf is defined and data.registro.uf == 'PA' %} selected="selected" {% endif %}>Pará</option>
+                                    <option value="PB" {% if data.registro.uf is defined and data.registro.uf == 'PB' %} selected="selected" {% endif %}>Paraíba</option>
+                                    <option value="PR" {% if data.registro.uf is defined and data.registro.uf == 'PR' %} selected="selected" {% endif %}>Paraná</option>
+                                    <option value="PE" {% if data.registro.uf is defined and data.registro.uf == 'PE' %} selected="selected" {% endif %}>Pernambuco</option>
+                                    <option value="PI" {% if data.registro.uf is defined and data.registro.uf == 'PI' %} selected="selected" {% endif %}>Piauí</option>
+                                    <option value="RJ" {% if data.registro.uf is defined and data.registro.uf == 'RJ' %} selected="selected" {% endif %}>Rio de Janeiro</option>
+                                    <option value="RN" {% if data.registro.uf is defined and data.registro.uf == 'RN' %} selected="selected" {% endif %}>Rio Grande do Norte</option>
+                                    <option value="RS" {% if data.registro.uf is defined and data.registro.uf == 'RS' %} selected="selected" {% endif %}>Rio Grande do Sul</option>
+                                    <option value="RO" {% if data.registro.uf is defined and data.registro.uf == 'RO' %} selected="selected" {% endif %}>Rondônia</option>
+                                    <option value="RR" {% if data.registro.uf is defined and data.registro.uf == 'RR' %} selected="selected" {% endif %}>Roraima</option>
+                                    <option value="SC" {% if data.registro.uf is defined and data.registro.uf == 'SC' %} selected="selected" {% endif %}>Santa Catarina</option>
+                                    <option value="SP" {% if data.registro.uf is defined and data.registro.uf == 'SP' %} selected="selected" {% endif %}>São Paulo</option>
+                                    <option value="SE" {% if data.registro.uf is defined and data.registro.uf == 'SE' %} selected="selected" {% endif %}>Sergipe</option>
+                                    <option value="TO" {% if data.registro.uf is defined and data.registro.uf == 'TO' %} selected="selected" {% endif %}>Tocantins</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="mb-4">
+                    <h3 class="mb-3"><strong>Equipamento</strong></h3>
+                    <hr class="mb-4">
+
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group" id="grupo-serie">
+                                <input type="hidden" name="serie_id" {{disabled_atendimento}}  id="campo-numero-serie-id" value="{{data.registro.serie_id}}">
+                                <label>Número de Série *</label>
+                                <input type="text" name="numero_serie" {{disabled_atendimento}}  required="required" id="campo-numero-serie"  class="form-control" placeholder="Informe o Número de Série" value="{% if data.registro.serie is defined %}{{data.registro.serie}}{% endif %}">
+                                <div class="form-control-feedback" style="display:none;" id="warning-serie" >Desculpe, mas este número de série não existe!</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Produto *</label>
+                                <input type="hidden" name="item_id" {{disabled_atendimento}} id="campo-item-id" value="{{data.registro.item_id}}">
+                                <input type="text" id="campo-descricao-item" name="descricao_item" disabled="disabled" class="form-control" value="{{data.registro.item}}">
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                            <label>Garantia *</label>
+                                <select name="garantia" {{disabled_atendimento}} id="select-garantia" class="form-control" required="required">
+                                    <option></option>
+                                    <option value="S" {% if data.registro.garantia is defined and data.registro.garantia == 'S' %} selected="selected" {% endif %}>Sim</option>
+                                    <option value="N" {% if data.registro.garantia is defined and data.registro.garantia == 'N' %} selected="selected" {% endif %}>Não</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row"> 
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>Data Fabricação</label>
+                                <input type="text" id="campo-data-fab" name="dt_fabricacao" readonly="readonly" class="form-control" value="{{data.registro.dt_fabricacao}}">
+                            </div>
+                        </div>
+                    </div>
+
+                    {#<canvas id="canvas" muted="muted" hidden></canvas>#}
+
+                    <video id="preview" style="display:none;"></video>
+   
+                    {% if not esconde_botoes_atendimento %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary btn-captura-qr"><i class="fa fa-camera"></i> Capturar QR Code</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Condições do Equipamento*</label>
+                                <textarea name="obs_cond_equip" {{disabled_atendimento}} required="required" maxlength="3999" class="form-control" rows="4" style="resize:none;">{{data.registro.obs_cond_equip}}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Defeito Informado pelo Cliente*</label>
+                                <textarea name="obs_relato_cli" {{disabled_atendimento}} required="required" maxlength="3999" class="form-control" rows="4" style="resize:none;">{{data.registro.obs_relato_cli}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            <div class="alert alert-danger alert-dismissable">
+                                <strong>ATENÇÃO!</strong><br>
+                                - Imprima duas vias deste documento;<br>
+                                - Colete a assinatura do seu cliente nas duas vias;<br>
+                                - Guarde a outra via assinada pelo cliente para ser enviada à Resfri Ar;<br>
+                                - Para Imprimir clique em <strong>Adicionar</strong>.
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-3">
+                        <div class="col-lg-12">
+                            {% if data.permissao.permissao > 1 and data.registro.id == null  %}
+                                {% if not esconde_botoes_atendimento %}
+                                <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                                    <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                                </button>
+                                {% endif %}
+                            {% endif %}
+                            <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                                <i class="fa fa-times"></i> Cancelar
+                            </a>
+                            {% if data.registro.id != null %}
+                            <a href="/assistencia-externa/ordem-servico/imprimir-atendimento/{{data.registro.id}}" class="btn btn-primary btn-imprimir"><i class="fa fa-print"></i> Imprimir</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+
+
+            <div class="card card-outline-info tab-pane container {% if data.registro.id == null %} disabled {% elseif data.registro.id != null and data.registro.status_id == '1' %} active {% else %} fade {% endif %} "id="analise" style="max-width: none;">
+                <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}}/editar-servicos {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-at-externa" enctype="multipart/form-data" >
+                    {% if data.registro.id is defined %}
+                        <input type="hidden" name="id" value="{{data.registro.id}}">
+                        <input type="hidden" name="_METHOD" value="PUT"/>
+                    {% endif %}
+                <div class="card-body">
+
+
+                    <h3 class="mb-3"><strong>Análise Técnica</strong></h3>
+                    <hr class="mb-4">
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Defeito Constatado Pelo Técnico*</label>
+                                <textarea name="obs_relato_tec" {{disabled_assistencia}} required="required" maxlength="3999" class="form-control" rows="4" style="resize:none;">{{data.registro.obs_relato_tec}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="mb-4">
+                    <h4 class="mb-3"><strong>Serviços à Executar</strong></h4>
+                    <hr class="mb-2">
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            {% for c,categoria in data.categorias %}
+                                <hr class="mb-2">
+                                <h6 class="mb-3"><strong>{{categoria.cod_cat}} - {{categoria.descricao}}</strong></h6>
+                                <hr class="mb-2">
+                                <table class="table table-striped ">
+                                    <tbody>
+                                        {% for i,servico in categoria.servicos %}
+                                            <tr>
+                                                <td width="10%"><input type="checkbox" name="categoria[{{categoria.id}}][servico][{{i}}]" {% if servico.checked == true %} checked="checked" {% endif %} value="{{servico.id}}" class="custom-control-input" {{disabled_assistencia}}  id="check-{{c}}-servicos-{{i}}">
+                                                <label class="custom-control-label" for="check-{{c}}-servicos-{{i}}"></label></td>
+                                                <td width="90%">{{servico.cod_serv}} - {{servico.descricao}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <h5 class="mb-2 mt-2"><strong>Anexos</strong></h5>
+                    <hr class="mb-4">
+                    <div class="row mt-1">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                {% if data.registro.status_id == 1 %}
+                                <div class="form-group">
+                                    <input id="upload2" type="file" {% if data.registro.bloqueia_campos == '1' %} disabled="disabled" {% endif %} name="files[]" multiple>
+                                </div>
+                                {% endif %}
+
+                                {% if data.arquivos_at is defined and data.arquivos_at != null %}
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="40%">Arquivo</th>
+                                                        <th width="40%">Data</th>
+                                                        <th width="20%"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for file in data.arquivos_at %}
+                                                        <tr>
+                                                            <td>{{file.arquivo}}</td>
+                                                            <td>{{file.criado_em|date("d/m/Y H:m:i")}}</td>
+                                                            <td align="right">
+                                                                <a href="/assistencia-externa/ordem-servico/arquivos/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+                                                                {% if data.setor == 'admin' %}
+                                                                <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-name="{{file.arquivo}}" title="Excluir" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    {% else %}
+                                                        <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-12">
+                        {% if data.permissao.permissao > 1 and data.registro.status_id == 1 %}
+                            <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                                <i class="fa fa-dollar"></i>{% if data.registro.id is defined %} Solicitar Aprovação {% endif %}
+                            </button>
+                        {% endif %}
+                        <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                            <i class="fa fa-times"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+                </form>
+
+            </div>
+
+            <div class="card card-outline-info tab-pane container {% if data.registro.id == null %} disabled {% elseif data.registro.id != null and (data.registro.status_id == '2' or data.registro.status_id == 4) %} active {% else %} fade {% endif %}" style="max-width: none;" id="aprovacao">
+                <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}}/aprovar-servicos {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form form-aprovacao">
+                    {% if data.registro.id is defined %}
+                        <input type="hidden" name="id" value="{{data.registro.id}}">
+                        <input type="hidden" name="_METHOD" value="PUT"/>
+                    {% endif %}
+                <div class="card-body">
+                    <h3 class="mb-3"><strong>Aprovação de Serviços</strong></h3>
+                    <hr class="mb-4">
+
+                   {#} {% if data.registro.status_id == 6 %}
+                        <div class="alert alert-danger alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            Os serviços solicitados para esta ordem foram reprovados. Entre em Contato.
+                        </div>
+                    {% endif %}
+
+                    {% if data.registro.status_id == 3 %}
+
+                    {% endif %} {#}
+
+                    {% if data.libera_aprovacao == true %}
+
+                        {% if data.registro.status_id == 4 %}
+                            <div class="alert alert-danger alert-dismissable">
+                                Os serviços solicitados foram reprovados.
+                            </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th width="60%">Serviço</th>
+                                            <th width="20%" class="text-center">Valor Original</th>
+                                            <th width="20%" class="text-center">Valor Calculado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% set cat_ant = false %}
+                                        {% for sol in data.servicos_solicitados %}
+                                            <tr>
+                                                <td>{{sol.cod_serv}} - {{sol.desc_serv}}</td>
+                                                <td align="center">R$ {{sol.valor_servico|number_format('2',',','.')}}</td>
+                                                {% if cat_ant != sol.categoria_id %}
+                                                    {% if sol.qtde_serv_cat == 1 %}
+                                                        <td align="center">R$ {{sol.valor_servico|number_format('2',',','.')}}</td>
+                                                    {% else %}
+                                                        <td align="center" rowspan="{{sol.qtde_serv_cat}}">R$ {{sol.valor_calculado|number_format('2',',','.')}}</td>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% set cat_ant = sol.categoria_id %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td align="right" colspan="2"><b style="font-size:22px;">Total</b></td>
+                                            <td class="text-center"><b style="font-size:22px;">R$ {{data.total_servicos|number_format('2',',','.')}}</b></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                <small>* O valor calculado é baseado no serviço e na sua categoria</small>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Observações </label>
+                                    <textarea name="obs_aprovacao" {% if data.registro.bloqueia_campos == '1' %} readonly="readonly" {% endif %} maxlength="3999" class="form-control" rows="4" style="resize:none;">{{data.registro.obs_aprovacao}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                {% if data.permissao.permissao > 1 %}
+                                    {% if not (data.registro.status_id_aprovado == 5 or data.registro.status_id_reprovado == 4) %}
+                                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                                            <i class="fa fa-dollar"></i>{% if data.registro.id is defined %} Aprovar Serviços {% endif %}
+                                        </button>
+
+                                        <button type="button" class="btn btn-danger btn-reprovar" data-loading-text="Aguarde...">
+                                            <i class="fa fa-dollar"></i>{% if data.registro.id is defined %} Reprovar Serviços {% endif %}
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                                <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                                    <i class="fa fa-times"></i> Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        {% if data.registro.status_id == 2 %}
+                        <div class="alert alert-primary alert-dismissable">
+                            Os serviços solicitados estão aguardando aprovação! Aguarde.
+                        </div>
+                        {% elseif data.registro.status_id == 4 %}
+                            <div class="alert alert-danger alert-dismissable">
+                                Os serviços solicitados foram reprovados.
+                            </div>
+                        {% else %}
+
+                            {% if data.registro.status_id_aprovado == 5 %}
+
+                            <div class="alert alert-success alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                Os serviços solicitados foram aprovados!
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th width="60%">Serviço</th>
+                                                <th width="20%" class="text-center">Valor Original</th>
+                                                <th width="20%" class="text-center">Valor Calculado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% set cat_ant = false %}
+                                            {% for sol in data.servicos_solicitados %}
+                                                <tr>
+                                                    <td>{{sol.cod_serv}} - {{sol.desc_serv}}</td>
+                                                    <td align="center">R$ {{sol.valor_servico|number_format('2',',','.')}}</td>
+                                                    {% if cat_ant != sol.categoria_id %}
+                                                        {% if sol.qtde_serv_cat == 1 %}
+                                                            <td align="center">R$ {{sol.valor_servico|number_format('2',',','.')}}</td>
+                                                        {% else %}
+                                                            <td align="center" rowspan="{{sol.qtde_serv_cat}}">R$ {{sol.valor_categoria|number_format('2',',','.')}}</td>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% set cat_ant = sol.categoria_id %}
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td align="right" colspan="2"><b style="font-size:22px;">Total</b></td>
+                                                <td class="text-center"><b style="font-size:22px;">R$ {{data.total_servicos|number_format('2',',','.')}}</b></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    <small>* O valor calculado é baseado no serviço e na sua categoria</small>
+                                </div>
+                        </div>
+
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+                </form>
+            </div>
+
+              <div class="card card-outline-info tab-pane container {% if data.registro.id == null %} disabled {% elseif data.registro.id != null and (data.registro.status_id > 3 and data.registro.status_id != 4) %} active {% else %} fade {% endif %}" id="conclusao" style="max-width: none;">
+                <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}}/concluir-servicos {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form form-conclusao" enctype="multipart/form-data">
+                    {% if data.registro.id is defined %}
+                        <input type="hidden" name="id" value="{{data.registro.id}}">
+                        <input type="hidden" name="_METHOD" value="PUT"/>
+                    {% endif %}
+                <div class="card-body">
+                    <h3 class="mb-3"><strong>Conclusão</strong></h3>
+                    <hr class="mb-4">
+
+                    {% if data.registro.status_id_aprovado == 5 %}
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th width="100%">Serviços Executados</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for sol in data.servicos_solicitados %}
+                                            <tr>
+                                                <td>{{sol.cod_serv}} - {{sol.desc_serv}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Observações dos Serviços Realizados </label>
+                                    <textarea name="obs_conclusao" {% if data.registro.bloqueia_campos == '1' %} readonly="readonly" {% endif %} maxlength="3999" class="form-control" rows="4" style="resize:none;">{{data.registro.obs_conclusao}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    <h5 class="mb-2 mt-2"><strong>Anexos</strong></h5>
+                    <hr class="mb-4">
+                    <div class="row mt-1">
+                        <div class="col-md-12">
+                            <div class="form-group">
+
+                                <div class="form-group">
+                                    <input id="upload" type="file" required="required" {% if data.registro.bloqueia_campos == '1' %} disabled="disabled" {% endif %} name="files[]" multiple>
+                                </div>
+
+                                {% if data.arquivos_cl is defined and data.arquivos_cl != null %}
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="40%">Arquivo</th>
+                                                        <th width="40%">Data</th>
+                                                        <th width="20%"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for file in data.arquivos_cl %}
+                                                        <tr>
+                                                            <td>{{file.arquivo}}</td>
+                                                            <td>{{file.criado_em|date("d/m/Y H:m:i")}}</td>
+                                                            <td align="right">
+                                                                <a href="/assistencia-externa/ordem-servico/arquivos/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+                                                                {% if data.setor == 'admin' %}
+                                                                <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-name="{{file.arquivo}}" title="Excluir" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    {% else %}
+                                                        <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                <div class="alert alert-danger alert-dismissable">
+                                    <strong>ATENÇÃO!</strong><br>
+                                    - Imprima duas vias deste documento;<br>
+                                    - Colete a assinatura do seu cliente nas duas vias;<br>
+                                    - Assine uma delas e entregue a via assinada ao seu cliente;<br>
+                                    - Guarde a outra via assinada pelo cliente para ser enviada à Resfri Ar;<br>
+                                    - Para Imprimir clique em <strong>Finalizar Ordem</strong>.
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row mb-3">
+                            <div class="col-lg-12">
+                                {% if data.permissao.permissao > 1 and data.registro.status_id < 8 %}
+                                    <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                                        <i class="fa fa-check"></i>{% if data.registro.id is defined %} Finalizar Ordem {% endif %}
+                                    </button>
+                                {% endif %}
+                                {% if data.registro.id and data.registro.status_id >= 8 %}
+                                    <a href="/assistencia-externa/ordem-servico/imprimir-conclusao/{{data.registro.id}}" class="btn btn-primary btn-imprimir"><i class="fa fa-print"></i> Imprimir</a>
+                                {% endif %}
+                                {#<button type="button" class="btn btn-primary" id="btn-solicitar-fabrica" >Solicitar Envio para a Fábrica</button>{#}
+                                <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                                    <i class="fa fa-times"></i> Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                </form>
+            </div>
+
+        </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript">
+        var ordem_id = '{{data.registro.id}}';
+    </script>
+{% endblock %}

@@ -1,0 +1,259 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <div class="row">
+        <div class="col-lg-7">
+           
+            <form action="/ti/companies/form" method="post" role="form" class="form-companies p-bottom-40">
+
+            <div class="card card-outline-info">
+                <div class="card-header">
+                    <h4 class="m-b-0 text-white">Cliente</h4>
+                </div>
+                <div class="card-body">
+
+                        <input type="hidden" name="type_internal" value="CUSTOMER">
+
+                        {% if company.id is defined %}
+                            <input type="hidden" name="id" value="{{company.id}}">
+                        {% endif %}
+
+                        <div class="form-group">
+                            <label>Tipo Pessoa*</label>
+                            <select name="type" class="form-control" data-myrules="required">
+                                <option value="PJ" {% if company.type is defined and company.type == 'PJ' %} selected="selected" {% endif %}>Pessoa Jurídica</option>
+                                <option value="PF" {% if company.type is defined and company.type == 'PF' %} selected="selected" {% endif %}>Pessoa Física</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nome Fantasia*</label>
+                            <input type="text" name="name" class="form-control" placeholder="Informe o Nome" value="{% if company.name is defined %}{{company.name}}{% endif %}" data-myrules="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Razão Social*</label>
+                            <input type="text" name="corporate_name" class="form-control" placeholder="Informe a Razão Social" value="{% if company.corporate_name is defined %}{{company.corporate_name}}{% endif %}" data-myrules="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>CNPJ*</label>
+                            <input type="text" name="cnpj" class="form-control" placeholder="Informe o CNPJ" value="{% if company.cnpj is defined %}{{company.cnpj}}{% endif %}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>CPF*</label>
+                            <input type="text" name="cpf" class="form-control" placeholder="Informe o CPF" value="{% if company.cpf is defined %}{{company.cpf}}{% endif %}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Endereço*</label>
+                            <input type="text" name="address" class="form-control" placeholder="Informe o Endereço" value="{% if company.address is defined %}{{company.address}}{% endif %}" data-myrules="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Complemento</label>
+                            <input type="text" name="complement" class="form-control" placeholder="Informe o Complemento" value="{% if company.complement is defined %}{{company.complement}}{% endif %}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Bairro*</label>
+                            <input type="text" name="neighborhood" class="form-control" placeholder="Informe o Bairro" value="{% if company.neighborhood is defined %}{{company.neighborhood}}{% endif %}" data-myrules="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>CEP*</label>
+                            <input type="text" name="zipcode" class="form-control" placeholder="Informe o CEP" value="{% if company.zipcode is defined %}{{company.zipcode}}{% endif %}" data-myrules="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cidade*</label>
+                            <input type="text" name="city" class="form-control" placeholder="Informe a Cidade" value="{% if company.city is defined %}{{company.city}}{% endif %}" data-myrules="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Estado*</label>
+                            <select name="state" class="form-control" data-myrules="required">
+                                <option value=""></option>
+                                <option value="AC" {% if company.state is defined and company.state == 'AC' %} selected="selected" {% endif %}>Acre</option>
+                                <option value="AL" {% if company.state is defined and company.state == 'AL' %} selected="selected" {% endif %}>Alagoas</option>
+                                <option value="AP" {% if company.state is defined and company.state == 'AP' %} selected="selected" {% endif %}>Amapá</option>
+                                <option value="AM" {% if company.state is defined and company.state == 'AM' %} selected="selected" {% endif %}>Amazonas</option>
+                                <option value="BA" {% if company.state is defined and company.state == 'BA' %} selected="selected" {% endif %}>Bahia</option>
+                                <option value="CE" {% if company.state is defined and company.state == 'CE' %} selected="selected" {% endif %}>Ceará</option>
+                                <option value="DF" {% if company.state is defined and company.state == 'DF' %} selected="selected" {% endif %}>Distrito Federal</option>
+                                <option value="ES" {% if company.state is defined and company.state == 'ES' %} selected="selected" {% endif %}>Espírito Santo</option>
+                                <option value="GO" {% if company.state is defined and company.state == 'GO' %} selected="selected" {% endif %}>Goiás</option>
+                                <option value="MA" {% if company.state is defined and company.state == 'MA' %} selected="selected" {% endif %}>Maranhão</option>
+                                <option value="MT" {% if company.state is defined and company.state == 'MT' %} selected="selected" {% endif %}>Mato Grosso</option>
+                                <option value="MS" {% if company.state is defined and company.state == 'MS' %} selected="selected" {% endif %}>Mato Grosso do Sul</option>
+                                <option value="MG" {% if company.state is defined and company.state == 'MG' %} selected="selected" {% endif %}>Minas Gerais</option>
+                                <option value="PA" {% if company.state is defined and company.state == 'PA' %} selected="selected" {% endif %}>Pará</option>
+                                <option value="PB" {% if company.state is defined and company.state == 'PB' %} selected="selected" {% endif %}>Paraíba</option>
+                                <option value="PR" {% if company.state is defined and company.state == 'PR' %} selected="selected" {% endif %}>Paraná</option>
+                                <option value="PE" {% if company.state is defined and company.state == 'PE' %} selected="selected" {% endif %}>Pernambuco</option>
+                                <option value="PI" {% if company.state is defined and company.state == 'PI' %} selected="selected" {% endif %}>Piauí</option>
+                                <option value="RJ" {% if company.state is defined and company.state == 'RJ' %} selected="selected" {% endif %}>Rio de Janeiro</option>
+                                <option value="RN" {% if company.state is defined and company.state == 'RN' %} selected="selected" {% endif %}>Rio Grande do Norte</option>
+                                <option value="RS" {% if company.state is defined and company.state == 'RS' %} selected="selected" {% endif %}>Rio Grande do Sul</option>
+                                <option value="RO" {% if company.state is defined and company.state == 'RO' %} selected="selected" {% endif %}>Rondônia</option>
+                                <option value="RR" {% if company.state is defined and company.state == 'RR' %} selected="selected" {% endif %}>Roraima</option>
+                                <option value="SC" {% if company.state is defined and company.state == 'SC' %} selected="selected" {% endif %}>Santa Catarina</option>
+                                <option value="SP" {% if company.state is defined and company.state == 'SP' %} selected="selected" {% endif %}>São Paulo</option>
+                                <option value="SE" {% if company.state is defined and company.state == 'SE' %} selected="selected" {% endif %}>Sergipe</option>
+                                <option value="TO" {% if company.state is defined and company.state == 'TO' %} selected="selected" {% endif %}>Tocantins</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Quilometragem</label>
+                            <div class="input-group">
+                                <input type="text" name="km" class="form-control" placeholder="Informe a Quilometragem" value="{% if company.km is defined %}{{company.km}}{% endif %}">
+                                <span class="input-group-addon">Km</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Observações</label>
+                            <textarea name="content" class="form-control" style="resize:none" rows="10">{% if company.content is defined %}{{company.content|raw}}{% endif %}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select name="status" class="form-control">
+                                <option value="ON" {% if company.status is defined and company.status == 'ON' %} selected="selected" {% endif %}>Ativo</option>
+                                <option value="OFF" {% if company.status is defined and company.status == 'OFF' %} selected="selected" {% endif %}>Inativo</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Percentual de Imposto</label>
+                            <div class="input-group">
+                                <input type="text" name="tax_percentage" class="form-control" placeholder="Informe o percentual de imposto" value="{% if company.tax_percentage is defined %}{{company.tax_percentage|number_format(2, ',', '.')}}{% endif %}">
+                                <span class="input-group-addon">%</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-default btn-success margin-r-15"><i class="fa fa-check"></i> {% if company.id is defined %} Editar {% else %} Adicionar {% endif %}</button>
+                        <a href="/ti/companies" class="btn btn-secondary">Cancelar</a>
+                    
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        {% if company.id != null %}
+
+            <div class="col-lg-5 float-r">
+                   <div class="card card-outline-info">
+                <div class="card-header">
+                    <h4 class="m-b-0 text-white">Produtos</h4>
+                </div>
+                <div class="card-body">
+                        <table class="table table-hover table-striped">
+                            <tbody>
+                            {% if projects != null %}
+                                {% for project in projects %}
+                                    <tr>
+                                        <form action="/ti/companies/project/edit" method="post">
+                                            <input type="hidden" name="company_id" value="{{company.id}}">
+                                            <input type="hidden" name="id" value="{{project.id}}">
+                                            <td><input type="text" class="form-control" name="name" value="{{project.name}}"></td>
+                                            <td width="90">
+                                                <button type="submit" class="btn btn-default btn-success btn-sm" title="Editar"><i class="fa fa-check"></i></button>
+                                                {% if project.can_delete == true %}
+                                                    <a href="/ti/companies/project/delete/{{company.id}}/{{project.id}}" class="btn btn-default btn-danger btn-sm" title="Excluir"><i class="fa fa-trash-o"></i></a>
+                                                {% endif %}
+                                            </td>
+                                        </form>
+                                    </tr>
+                                {% else %}
+                                    Nenhum
+                                {% endfor %}
+                            {% endif %}
+                            <tr>
+                                <form action="/ti/companies/project/create" method="post">
+                                    <input type="hidden" name="company_id" value="{{company.id}}">
+                                    <td><input type="text" class="form-control" name="name" placeholder="Digite o nome"></td>
+                                    <td wdith="90"><button type="submit" class="btn btn-default btn-success btn-sm" title="Adicionar"><i class="fa fa-check"></i></button></td>
+                                </form>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!--div class="col-lg-5 float-r m-top-20">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><strong>Valores das Horas</strong> <a href="javascript:void(0);" class="show-hidden-hour"><small>(mostrar/esconder)</small></a></div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-striped">
+                            <tbody>
+                            {% if hours != null %}
+                                {% for hour in hours %}
+                                    <tr>
+                                        <form action="javascript:void(0);" method="post" id="form_{{hour.id}}">
+                                            <input type="hidden" name="company_id" value="{{company.id}}">
+                                            <input type="hidden" name="hour_id" value="{{hour.id}}">
+                                            <td>{{hour.name}}</td>
+                                            {# <td width="150"><span class="notification"></span></td> #}
+                                            <td width="100"><input type="text" class="form-control hidden hour-value" name="value" value="{{hour.value}}"></td>
+                                            <td width="40">
+                                                <button type="submit" class="btn btn-default btn-success btn-sm btn-update-company-hour" data-id="{{hour.id}}" title="Editar"><i class="fa fa-check"></i></button>
+                                            </td>
+                                        </form>
+                                    </tr>
+                                {% else %}
+                                    Nenhum
+                                {% endfor %}
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div-->
+
+        {% else %}
+
+            <div class="col-lg-5 float-r m-top-20">
+                 <div class="card card-outline-info">
+                    <div class="card-header">
+                        <h4 class="m-b-0 text-white">Cadastro de Prospect</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/ti/companies/form" method="post" role="form" class="main-form p-bottom-40">
+
+                            <input type="hidden" name="type_internal" value="PROSPECT">
+
+                            <div class="form-group">
+                                <label>Nome Fantasia*</label>
+                                <input type="text" name="name" class="form-control" placeholder="Informe o Nome" value="{% if company.name is defined %}{{company.name}}{% endif %}" data-myrules="required">
+                            </div>
+
+                            <button type="submit" class="btn btn-default btn-success margin-r-15"><i class="fa fa-check"></i>Adicionar</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

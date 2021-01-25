@@ -1,0 +1,37 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th width="10%">Protocolo</th>
+            <th width="10%">Data</th>
+            <th width="10%">Nro. Série</th>
+            <th width="10%">Cliente</th>
+            <th width="10%">Cliente Origem</th>
+            <th width="10%">Responsável</th>
+            <th width="10%">Status</th>
+            <th width="10%">Data Recebimento</th>
+            <th width="10%">Data Conclusão</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in data.resultado %}
+            <tr {% if row.material_recebido == '1'%} bgcolor="#b4fdbf" {% endif %} >
+                <td>{{row.protocolo}}</td>
+                <td>{{row.data}}</td>
+                <td>{{row.serie}}</td>
+                <td>{{row.cliente}}</td>
+                <td>{{row.cod_cli_origem}} - {{row.descricao_cli_origem}}</td>
+                <td>{{row.responsavel}}</td>
+                <td>{{row.descricao_status}} </td>
+                <td>{{row.recebido_em_char_min}}</td>
+                <td>{% if row.status_id == '3' %}
+                        {{row.dt_ult_status}}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="9" align="center">Nenhum registro encontrado.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>

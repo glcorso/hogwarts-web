@@ -1,0 +1,6 @@
+# Crie o cron no usuário padrão (lidere)
+# crontab -e
+## Cria um arquivo para verificar se o cron esta rodando
+* * * * * env > /tmp/env.output
+
+## Adicionar os crons abaixo:

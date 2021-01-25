@@ -1,0 +1,87 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% include 'flash.twig' with { 'flash': flash } %}
+
+    <div class="btn-table-up">
+        <div class="row">
+            <div class="col-lg-10">
+            </div>
+         <div class="col-lg-2">
+            <div class="text-right btn-table-up">
+                <a class="btn btn-default"
+                   href="/{{data.modulo.url}}/adicionar">
+                    <i class="fa fa-plus"></i> Adicionar
+                </a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="panel panel-card">
+        <table class="table table-responsive uploads">
+            <thead>
+                <tr>
+                    <th>file_name</th>
+                    <th>file_type</th>
+                    <th>orig_name</th>
+                    <th>client_name</th>
+                    <th>file_size</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for upload in data.uploads %}
+                    <tr>
+                        <td>
+                            <a href="/arquivos/tmp/{{upload.file_name}}" target="_blank">
+                                {{upload.file_name}}
+                            </a>
+                        </td>
+                        <td>{{upload.file_type}}</td>
+                        <td>{{upload.orig_name}}</td>
+                        <td>{{upload.client_name}}</td>
+                        <td>{{upload.file_size}}<td>
+                        <td></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="10" align="center">
+                            Nenhum registro encontrado.
+                        </td>
+                    </td>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {{data.uploads.links()|raw}}
+
+    <div class="modal fade modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do usuário <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/{{data.modulo.url}}" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock principal %}
+
+{% block javascripts %}
+   {{parent()}}
+{% endblock %}

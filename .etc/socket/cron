@@ -1,0 +1,5 @@
+# REINICIA O WEBSOCKET
+00 06 * * * bash /var/www/portal-default/.etc/socket/restart.sh >> /var/www/portal-default/storage/logs/socket.log
+00 12 * * * bash /var/www/portal-default/.etc/socket/restart.sh >> /var/www/portal-default/storage/logs/socket.log
+00 18 * * * bash /var/www/portal-default/.etc/socket/restart.sh >> /var/www/portal-default/storage/logs/socket.log
+00 23 * * * bash /var/www/portal-default/.etc/socket/restart.sh >> /var/www/portal-default/storage/logs/socket.log

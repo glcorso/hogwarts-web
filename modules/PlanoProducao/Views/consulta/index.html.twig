@@ -1,0 +1,214 @@
+{% extends 'basePainel.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+  <style type="text/css">
+        .cab{
+            background-color: #dadada;
+        }
+
+        .table-bordered td, .table-bordered th {
+            border: 1px solid #000000!important;
+        }
+
+        thead th.init {
+          font-size: 13px;
+          padding: 1px !important;
+          height: 15px;
+        }
+        .table td, .table th {
+            border-color: #2b2727!important;
+        }
+        .pd-nw{
+            padding: 1px !important;
+        }
+  </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+    {#<div class="btn-table-up ">
+        <div class="row">
+            <div class="col-lg-12 mb-1">
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Filtros <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu animated" style="width: 540px; padding: 15px;">
+                        <form action="/{{data.modulo.url}}" method="get" role="form" class="form-filtro">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Protocolo</label>
+                                    <input type="text" name="protocolo" class="form-control" value="{% if data.filtros.protocolo is defined %}{{data.filtros.protocolo}}{% endif %}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Data</label>
+                                    <input type="text" name="data" class="form-control" value="{% if data.filtros.data is defined %}{{data.filtros.data}}{% endif %}">
+                                    <small>Para utilizar intervalos, utilize o formato dd/mm/yyyy|dd/mm/yyyy</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Cliente</label>
+                                    <select name="cliente_id" id="select-cliente-interno" class="form-control">
+                                        {% if data.filtros.cliente_id is defined %}
+                                            <option value="{{data.filtros.cliente_id}}">
+                                                {{data.filtros.cod_cli_assistencia}} - {{data.filtros.descricao_cli_assistencia}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Cliente Origem</label>
+                                    <select name="cliente_origem_id" id="select-cliente" class="form-control">
+                                        {% if data.filtros.cliente_origem_id is defined %}
+                                            <option value="{{data.filtros.cliente_origem_id}}">
+                                                {{data.filtros.cod_cli_origem}} - {{data.filtros.descricao_cli_origem}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                    
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Nro. Série</label>
+                                     <input type="text" name="serie" class="form-control" value="{% if data.filtros.serie is defined %}{{data.filtros.serie}}{% endif %}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Sequencial</label>
+                                     <input type="text" name="sequencial" class="form-control" value="{% if data.filtros.sequencial is defined %}{{data.filtros.sequencial}}{% endif %}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Produto</label>
+                                    <select name="item_id" id="select-item" class="form-control" >
+                                        {% if data.filtros.item_id is defined %}
+                                            <option value="{{data.filtros.item_id}}">
+                                                {{data.filtros.cod_item}} - {{data.filtros.desc_tecnica}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Responsável</label>
+                                    <select name="responsavel_id" id="select-cliente" class="form-control">
+                                        <option value="TODOS">Todos</option>
+                                        {% for u in data.usuarios %}
+                                            <option value="{{u.id}}" {% if data.filtros.responsavel_id != null and data.filtros.responsavel_id == u.id %} selected="selected" {% elseif data.filtros.responsavel_id == null  and usuario.id == u.id %}  selected="selected" {% endif %}> {{u.nome}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Motivo</label>
+                                    <select name="motivo_id" id="select-motivo" class="form-control">
+                                        {% if data.filtros.motivo_id is defined %}
+                                            <option value="{{data.filtros.motivo_id}}">
+                                                {{data.filtros.cod_motivo}} - {{data.filtros.descricao_motivo}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Defeito</label>
+                                    <select name="defeito_principal_id" id="select-defeito"  class="form-control">
+                                        {% if data.filtros.defeito_principal_id is defined %}
+                                            <option value="{{data.filtros.defeito_principal_id}}">
+                                                {{data.filtros.cod_defeito}} - {{data.filtros.descricao_defeito}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-success" value="Filtrar">
+                                    <a href="javascript:void(0);" class="btn btn-inverse waves-effect waves-light btn-limpar-filtro">Limpar Filtros</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>#}
+
+    <div class="col-12">
+        <h4><strong><p class="text-right">Total Geral: {{data.total_geral}}</p></strong></h4>
+    </div>
+
+    <div style="font-size:12px;">
+
+        <div class="card mt-2">
+            <div class="card-body">
+                {% set data_old = '' %}
+                {% set carga_old = '' %}
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                {% for registro in data.resultado %}
+                    <thead>
+                    {% if registro.data_carga_char != data_old %}
+                        <tr><th class="cab init" colspan="3">Data: {{registro.data_carga_char}}</td>
+                            <th class="cab init text-right" colspan="2">Total: {{registro.total_dia}}</td>
+                        </tr>
+                    {% endif %}
+
+                    {% if registro.carga != carga_old %}
+                         <tr><th class="cab init" colspan="3">Carga: {{registro.carga}}</td>
+                             <th class="cab init text-right" colspan="2">Total: {{registro.total_carga}}</td>
+                         </tr>
+                        {% if registro.obs != ''%}
+                            <tr><th class="cab init" colspan="5">{{registro.obs|nl2br }}</td></tr>
+                        {% endif %}
+                        <tr>{% if registro.id != null %}
+                            <th class="cab" width="10%">ID</th>
+                            {% endif %}
+                            <th class="cab" width="10%">Código</th>
+                            <th class="cab" {% if registro.id != null %}width="70%" {% else %} width="80%"{% endif %} >Descrição</th>
+                            <th class="cab" width="5%">Ordem</th>
+                            <th class="cab" width="5%">Qtde.</th>
+                        </tr>
+                    {% endif %}
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% if registro.id != null %}
+                            <td><strong> {{registro.id}}</strong></td>
+                            {% endif %}
+                            <td><strong>{{registro.codigo}}</strong></td>
+                            <td><strong>{{registro.descricao}}</strong></td>
+                            <td><strong><a href="javascript:void(0);" class="link-abre-demandas" data-ordem-id="{{registro.ordem_id}}" data-num-ordem="{{registro.ordem}}">{{registro.ordem}}</strong></a></td>
+                            <td><strong>{{registro.qtde}}</strong></td>
+                        </tr>
+                    </tbody>
+            
+                    {% set data_old = registro.data_carga_char %}
+                    {% set carga_old = registro.carga %}
+                {% else %}
+                    <tr><td class="text-center"><strong><h4>Nenhuma Ordem Encontrada.</h4></strong></td></tr>
+                {% endfor %}
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

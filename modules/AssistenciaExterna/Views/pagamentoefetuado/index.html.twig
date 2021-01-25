@@ -1,0 +1,255 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+
+    {% include 'flash.twig' with { 'flash': flash } %}
+
+
+    <div class="btn-table-up ">
+
+        <div class="row">
+            <div class="col-lg-10 mb-1">
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Filtros <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu animated" style="width: 540px; padding: 15px;">
+                        <form action="/{{data.modulo.url}}" method="get" role="form" class="form-filtro">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Pagamento</label>
+                                    <input type="text" name="num_pagamento" class="form-control" value="{% if data.filtros.num_pagamento is defined %}{{data.filtros.num_pagamento}}{% endif %}">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Data Pagamento</label>
+                                    <input type="text" name="criado_em" class="form-control" value="{% if data.filtros.criado_em is defined %}{{data.filtros.criado_em}}{% endif %}">
+                                    <small>Para utilizar intervalos, utilize o formato dd/mm/yyyy|dd/mm/yyyy</small>
+                                </div>
+                            </div>
+
+                            {% if data.usuario.tipo != 'ate' %}
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label class="filter-col" for="pref-search">
+                                            Assistência
+                                        </label>
+                                        <select name="criado_por" id="select-criado-por" class="form-control">
+                                            {% if data.filtros.assistencia is defined %}
+                                                <option value="{{data.filtros.assistencia}}">
+                                                    {{data.filtros.assistencia}} - {{data.filtros.assistencia_nome}}
+                                                </option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-success" value="Filtrar">
+                                    <a href="javascript:void(0);" class="btn btn-inverse waves-effect waves-light btn-limpar-filtro">Limpar Filtros</a>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-info btn-imprimir ml-1" target="_BLANK" style="display:none;">
+                        <i class="fa fa-print"></i> Imprimir
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="table-responsive">
+            <table class="table">
+            <thead>
+                <tr>
+                    <th width="25%">Pagamento</th>
+                    <th width="25%">Assistência</th>
+                    <th width="25%">Data Pagamento</th>
+                    <th width="15%">Valor</th>
+                    <th width="10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data.resultado %}
+                    <tr>
+                        <td>
+                            {{row.num_pgto}}
+                        </td>
+
+                        <td>
+                            {% if not row.assistencia.cliente_erp_descricao is empty %}
+                                {{row.assistencia.cliente_erp_cod_cli}}
+                                -
+                                {{row.assistencia.cliente_erp_descricao}}
+                            {% else %}
+                                Interno
+                            {% endif %}
+                        </td></a>
+
+                         <td>
+                            {{row.dt_pagamento}}</a>
+                        </td>
+                        <td>
+                            R$ {{row.valor_total|number_format('2',',','.')}}
+                        </td>
+                        <td style="display: flex">
+                            {# Imprimir excluir autorixar pagamento #}
+                            <div style="margin-right: 4px" >
+                                <a href="/{{data.modulo.url}}/imprimir-pagamento/{{row.id}}"
+                                    data-toggle="tooltip"
+                                    data-original-title="Imprimir"
+                                    class="btn btn-warning" >
+                                    <i class="fa fa-print"></i>
+                                </a>
+                            </div>
+                            {% if data.permissao.permissao > 2 %}
+                                {% if data.bloqueia_campos == 'N' and row.autorizado_em is null %}
+                                    <div style="margin-right: 4px" >
+                                        <a href="javascript:void(0);"
+                                            class="btn btn-danger btn-delete-modal"
+                                            data-id="{{row.id}}"
+                                            data-toggle="tooltip">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            {% if row.autorizado_em != null %}
+                                <span class="label label-success fw-bold" title="Autorizado">Autorizado</span>
+                            {% else %}
+                                {% if data.bloqueia_campos == 'N' %}
+                                <div style="margin-right: 4px" >
+                                    <a href="javascript:void(0);"
+                                        data-toggle="tooltip"
+                                        data-original-title="Autorizar pagamento"
+                                        data-id="{{row.id}}"
+                                        class="btn btn-success btn-autorizar" >
+                                        <i class="fa fa-check"></i> Autorizar pagamento
+                                    </a>
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                            {% if row.autorizado_em != null %}
+                                {% if row.existe_anexo > 0 %}
+                                    <a href="javascript:void(0);" class="btn btn-success open-modal-anexos" style="margin-left:4px;" data-id="{{row.id}}" data-toggle="modal" data-target="#downloadModal"><i class="fa fa-download"></i> Baixar Anexos</a>
+                               {% else %}
+                                    <a href="javascript:void(0);" class="btn btn-success open-modal" style="margin-left:4px;" data-id="{{row.id}}" data-toggle="modal" data-target="#uploadModal"><i class="fa fa-upload"></i> Anexar NF-e</a>
+                               {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6" align="center">Nenhum registro encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+    {% if data.paginacao is defined and data.paginacao != null %}
+        <div class="row">
+            {% if data.paginacao.qtde != null %}
+                <div class="col-lg-4"><small>{{data.paginacao.qtde|raw}}</small></div>
+            {% endif %}
+            <div class="col-lg-8 text-align-right">{{data.paginacao.paginacao|raw}}</div>
+        </div>
+    {% endif %}
+
+    <div class="modal fade modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do Pagamento <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/{{data.modulo.url}}" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="uploadModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+        <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Anexar NF-e</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form -->
+                    <form method="post" action="/assistencia-externa/pagamento-efetuado/anexar-nfe" enctype="multipart/form-data">
+                        <input type="hidden" name="pagamento_id" id="pagamento_id" value="">
+                        <input type="file" class="uploadArquivos" required="required" name="files[]" multiple>
+
+                        <hr>
+
+                        <button type="button" class="btn btn-success btn-submit-modal btn-success" data-loading-text="Confirmar...">Confirmar</button>
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div id="downloadModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+
+            <h4 class="modal-title">Anexos</h4>
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <table class="table files">
+                <thead>
+                    <tr>
+                        <th class="text-left" width="80%">Arquivos</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="body-arquivos">
+
+                </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

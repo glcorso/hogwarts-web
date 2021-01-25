@@ -1,0 +1,218 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+  <style type="text/css">
+    .custom-control {
+        position: relative;
+        display: -ms-inline-flexbox;
+        display: inline-flex;
+        min-height: 1.5rem;
+        padding-left: 0.0rem;
+        margin-right: 0rem;
+    }
+  </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+    <div class="btn-table-up ">
+        <div class="row">
+            <div class="col-lg-10 mb-1">
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Filtros <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu animated" style="width: 540px; padding: 15px;">
+                        <form action="/{{data.modulo.url}}" method="get" role="form" class="form-filtro">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Número Relatório</label>
+                                    <input type="text" name="id" class="form-control" value="{% if data.filtros.id is defined %}{{data.filtros.id}}{% endif %}">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Data</label>
+                                    <input type="text" name="criado_em" class="form-control" value="{% if data.filtros.criado_em is defined %}{{data.filtros.criado_em}}{% endif %}">
+                                    <small>Para utilizar intervalos, utilize o formato dd/mm/yyyy|dd/mm/yyyy</small>
+                                </div>
+                            </div>
+                            {% if data.setor != 'vendedor' %}
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Vendedor</label>
+                                    <select name="usuario_id" class="form-control">
+                                        <option value="">Todos</option>
+                                        {% for u in data.usuarios %}
+                                            <option value="{{u.id}}" {% if data.filtros.usuario_id is defined and data.filtros.usuario_id == u.id %} selected="selected" {% endif %}>{{u.nome}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label>Cliente</label>
+                                    <select name="est_id" id="select-cliente" class="form-control">
+                                        {% if data.filtros.est_id is defined %}
+
+                                            <option value="{{data.filtros.est_id}}">
+                                                {{data.filtros.cod_cli}} - {{data.filtros.descricao_cli}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Status</label>
+                                    <select name="status_id" class="form-control">
+                                        <option value="">Todos</option>
+                                        {% for s in data.status %}
+                                            <option value="{{s.id}}" {% if data.filtros.status_id is defined and data.filtros.status_id == s.id %} selected="selected" {% endif %}>{{s.status}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-success" value="Filtrar">
+                                    <a href="javascript:void(0);" class="btn btn-inverse waves-effect waves-light btn-limpar-filtro">Limpar Filtros</a>
+                                </div>
+                            </div>
+                         
+                        </form>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-info btn-imprimir-montadoras ml-1" target="_BLANK" style="display:none;">
+                        <i class="fa fa-print"></i> Imprimir
+                </a>
+            </div>
+         <div class="col-lg-2 mb-1">
+            {% if data.permissao.permissao > 1 and data.setor != 'pos_vendas' %}
+                <div class="text-right btn-table-up">
+                    <a class="btn btn-block btn-success waves-effect waves-light" href="/{{data.modulo.url}}/adicionar" id="btn-adicionar" ><i class="fa fa-plus"></i> Adicionar</a>
+                </div>
+            {% endif %}
+        </div>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="table-responsive">
+            <table class="table">
+            <thead>
+                <tr>
+                    <!-- para alterações verificar app.css -->
+                    <th width="1%">
+                    <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input"  name="check_sel_all_print" value="{{row.id}}" id="check-sel-all-print-montadoras">
+                            <label class="custom-control-label" for="check-sel-all-print-montadoras">
+                            </label>
+                        </div></th>
+                    <th width="5%">Nr.</th>
+                    <th width="15%">Data</th>
+                    <th width="20%">Vendedor</th>
+                    <th width="20%">Cliente</th>
+                    <th width="19%">Cidade / UF</th>
+                    <th width="10%">Status</th>
+                    <th width="10%">
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data.resultado %}
+                    <tr>
+                        <td><div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input check-montadoras"  name="check_sel_print" value="{{row.id}}" id="check-sel-all-print-{{row.id}}">
+                            <label class="custom-control-label" for="check-sel-all-print-{{row.id}}">
+                            </label>
+                        </div></td>
+                        <td><a href="/{{data.modulo.url}}/editar/{{row.id}}" class="atalho">{{row.nro}}</a></td>
+                        <td>{{row.criado_em|date('d/m/Y H:i:s')}}</td>
+                        <td>{{row.vendedor}}</td>
+                        <td>{{row.descricao_cliente}}</td>
+                        <td>{{row.cidade_cliente}} - {{row.uf_cliente}}</td>
+                        <td>
+                            {% if row.status_id == 1 %}
+                                <span class="label label-primary" title="{{row.status_descricao}}">{{row.status_descricao}}</span>
+                            {% else %}
+                                <span class="label label-success" title="{{row.status_descricao}}">{{row.status_descricao}}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-nowrap">
+                            <a href="/{{data.modulo.url}}/editar/{{row.id}}" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-pencil text-inverse m-r-10"></i></a>
+                            {% if data.permissao.permissao > 2  and usuario.tipo == 'admin' %}
+                                <a href="javascript:void(0);" class="btn-delete-modal {% if row.permite_excluir == false %} disabled {% endif %}" data-id="{{row.id}}" data-name="{{row.usuario}}" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="8" align="center">Nenhum registro encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+    {% if data.paginacao is defined and data.paginacao != null %}
+        <div class="row">
+            {% if data.paginacao.qtde != null %}
+                <div class="col-lg-4"><small>{{data.paginacao.qtde|raw}}</small></div>
+            {% endif %}
+            <div class="col-lg-8 text-align-right">{{data.paginacao.paginacao|raw}}</div>
+        </div>
+    {% endif %}
+
+    <div class="modal fade modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do Relatório de Visita <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/{{data.modulo.url}}" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript">
+        var hora_ini = '{{data.hora_ini}}',
+            hora_fim = '{{data.hora_fim}}',
+            setor = '{{data.setor}}';
+    </script>
+{% endblock %}

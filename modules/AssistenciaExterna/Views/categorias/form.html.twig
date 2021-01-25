@@ -1,0 +1,95 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-usuario">
+
+
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Categoria</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>Código*</label>
+                            <input type="text"
+                                   name="cod_cat"
+                                   class="form-control"
+                                   placeholder="Informe o Código"
+                                   value="{% if data.registro.cod_cat is defined %}{{data.registro.cod_cat}}{% endif %}"
+                                   required
+                                   autofocus
+                                   maxlength="10"
+                                   />
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="form-group">
+                            <label>Descrição*</label>
+                            <input type="text"
+                                   name="descricao"
+                                   class="form-control"
+                                   placeholder="Informe a Descrição"
+                                   value="{% if data.registro.descricao is defined %}{{data.registro.descricao}}{% endif %}"
+                                   required
+                                   autofocus
+                                   maxlength="70"
+                                   />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Status*</label>
+                            <select name="sit" class="form-control" required>
+                                <option value="1" {% if data.registro.sit is defined and data.registro.sit == '1' %} selected="selected" {% endif %}>Ativo</option>
+                                <option value="0" {% if data.registro.sit is defined and data.registro.sit == '0' %} selected="selected" {% endif %}>Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

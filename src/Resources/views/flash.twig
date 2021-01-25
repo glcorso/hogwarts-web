@@ -1,0 +1,7 @@
+{% if flash.error is defined %}
+    {% include 'flash/error.twig' with { 'flash': flash } %}
+{% endif %}
+
+{% if flash.success is defined %}
+    {% include 'flash/success.twig' with { 'flash': flash } %}
+{% endif %}

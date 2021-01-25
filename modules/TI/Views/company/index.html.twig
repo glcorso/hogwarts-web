@@ -1,0 +1,119 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+    <div class="btn-table-up">
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Filtros <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu animated" style="width: 340px; padding: 15px;">
+                        <form action="/ti/companies" method="get" role="form" class="form-filtro">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Nome</label>
+                                    <input type="text" class="form-control"  name="search" value="{{search}}" placeholder="Buscar">
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-success" value="Filtrar">
+                                    <a href="javascript:void(0);" class="btn btn-secondary btn-limpar-filtro">Limpar Filtros</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+         <div class="col-lg-2">
+            {# {% if data.permissao.permissao > 1 %} #}
+                <div class="text-right btn-table-up">
+                    <a class="btn btn-success" href="/ti/companies/form"><i class="fa fa-plus"></i> Adicionar</a>
+                </div>
+            {# {% endif %} #}
+        </div>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Produtos</th>
+                        <th>Chamados</th>
+                        {# <th>Usuários</th> #}
+                        <th>Status</th>
+                        <th width="100"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in companies %}
+                        <tr>
+                            <td><a href="/ti/companies/form/{{row.id}}">{{row.name}}</a></td>
+                            <td><a href="/ti/companies/form/{{row.id}}" class="text-primary">{{row.projects|length}}</a></td>
+                            <td><a href="/tickets?company_id={{row.id}}&date_start=&date_end=" class="text-primary">{{row.tickets|length}}</a></td>
+                            {# <td>{{row.users|length}}</td> #}
+                            <td>{% if row.status == 'ON' %}<span class="label bg-success">Ativo</span>{% else %}<span class="label bg-danger">Inativo</span>{% endif %}</td>
+                            <td class="text-nowrap text-right">
+                                <a href="/ti/companies/form/{{row.id}}" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-pencil text-inverse m-r-10"></i></a>
+                                {% if row.projects|length == 0 and row.tickets|length == 0 and row.users|length == 0 %}
+                                <a href="javascript:void(0);" class="btn-delete-modal" data-id="{{row.id}}" data-name="{{row.name}}" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6" align="center">Nenhum registro encontrado. </td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do cliente <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/ti/companies/delete" method="post">
+                        <input type="hidden" name="id" value="">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-submit-form-modal btn-success" data-loading-text="Processando...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

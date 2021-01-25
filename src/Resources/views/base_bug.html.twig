@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<!--[if lte IE 7]><html class="ie7"> <![endif]-->
+<!--[if IE 8]><html class="ie8"><![endif]-->
+<!--[if IE 9]><html class="ie9"><![endif]-->
+<!--[if IE 10]><html class="ie10"><![endif]-->
+<!--[if IE 11]><html class="ie11"><![endif]-->
+<!--[if !IE]><!--> <html lang="pt"><!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %} Portal {{empresa.nome_fantasia}} | Powered by Lidere {% endblock %}</title>
+    <!-- APP_NAME:{{APP_NAME}} -->
+    <!-- APP_ENV:{{APP_ENV}} -->
+    <!-- APP_DEBUG:{{APP_DEBUG}} -->
+    <!-- APP_PERPAGE:{{APP_PERPAGE}} -->
+    <!-- APP_EMAIL_EXCEPTIONS:{{APP_EMAIL_EXCEPTIONS}} -->
+    <!-- APP_VERSION:{{APP_VERSION}} -->
+    {% block meta %}
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    {% endblock %}
+
+    {% block stylesheets %}
+        
+        <link rel="stylesheet" type="text/css" href="/libs/select2/dist/css/select2.min.css">
+        <link rel="stylesheet" type="text/css" href="/libs/jquery-confirm2/css/jquery-confirm.css?v={{v}}" />
+        <link rel="stylesheet" type="text/css" href="/libs/bootstrap-multiselect/dist/css/bootstrap-multiselect.css?v={{v}}" />
+        <link href="/stylesheets/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/stylesheets/css/style.css" rel="stylesheet">
+        <link href="/javascripts/base/bootstrap-uploadfile/css/fileinput.min.css" rel="stylesheet">
+        <!-- You can change the theme colors from here -->
+        <link href="/stylesheets/css/colors/blue.css" id="theme" rel="stylesheet">
+
+       
+    {% endblock %}
+</head>
+<body>
+
+    {% block main %}
+    {% endblock %}
+
+    {% block javascripts %}
+        <script type="text/javascript" src="/javascripts/base/andlog.js?v={{v}}"></script>
+        {% if usuario.usuario == 'lidere' %}
+            <!--script type="text/javascript" src="/javascripts/base/debug.js?v={{v}}"></script-->
+        {% endif %}
+        <script src="/stylesheets/assets/plugins/jquery/jquery.min.js"></script>
+        <!-- Bootstrap tether Core JavaScript -->
+        <script src="/stylesheets/assets/plugins/bootstrap/js/popper.min.js"></script>
+        <script src="/stylesheets/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+        <!-- slimscrollbar scrollbar JavaScript -->
+        <script src="/stylesheets/js/jquery.slimscroll.js"></script>
+        <!--Wave Effects -->
+        <script src="/stylesheets/js/waves.js"></script>
+        <!--Menu sidebar -->
+        <script src="/stylesheets/js/sidebarmenu.js"></script>
+        <!--stickey kit -->
+        <script src="/stylesheets/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js"></script>
+        <script src="/stylesheets/assets/plugins/sparkline/jquery.sparkline.min.js"></script>
+        <!--Custom JavaScript -->
+        <script src="/stylesheets/js/custom.js"></script>
+        <!-- ============================================================== -->
+        <!-- Style switcher -->
+        <!-- ============================================================== -->
+        <script src="/stylesheets/assets/plugins/styleswitcher/jQuery.style.switcher.js"></script>
+      
+        <script type="text/javascript" src="/libs/offline-js/offline.min.js?v={{v}}"></script>
+        <script type="text/javascript" src="/libs/node-waves/dist/waves.min.js?v={{v}}"></script>
+        <script type="text/javascript" src="/libs/select2/dist/js/select2.full.min.js?v={{v}}"></script>
+        <script type="text/javascript" src="/libs/select2/dist/js/i18n/pt-BR.js?v={{v}}"></script>
+        <script type="text/javascript" src="/libs/jquery-mask-plugin/dist/jquery.mask.min.js?v={{v}}"></script>
+        <script type="text/javascript" src="/libs/jquery-confirm2/js/jquery-confirm.js?v={{v}}"></script>
+        <script type="text/javascript" src="/libs/bootstrap-multiselect/dist/js/bootstrap-multiselect.js?v={{v}}"></script>
+        <script type="text/javascript" src="/libs/jquery-tabledit/jquery.tabledit.min.js?v={{v}}"></script>
+        <script type="text/javascript" src="/javascripts/base/bootstrap-uploadfile/js/fileinput.min.js?v={{v}}"></script>
+        <script type="text/javascript" src="/javascripts/base/bootstrap-uploadfile/js/fileinput_locale_pt-BR.js?v={{v}}"></script>
+        <script type="text/javascript" src="/libs/myvalidate/dist/myValidate.min.js?v={{v}}"></script>
+        <script type="text/javascript" src="/javascripts/base/empresas-principal.js?v={{v}}"></script>
+        <script type="text/javascript" src="/javascripts/base/main.js?v={{v}}"></script>
+        {{loadjs()|raw}}
+    {% endblock %}
+</body>
+</html>

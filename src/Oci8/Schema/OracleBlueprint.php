@@ -1,0 +1,74 @@
+<?php
+
+namespace Lidere\Oci8\Schema;
+
+use Illuminate\Database\Schema\Blueprint;
+
+class OracleBlueprint extends Blueprint
+{
+    /**
+     * Table comment.
+     *
+     * @var string
+     */
+    public $comment = null;
+
+    /**
+     * Column comments
+     *
+     * @var array
+     */
+    public $commentColumns = array();
+
+    /**
+     * Database prefix variable.
+     *
+     * @var string
+     */
+    protected $prefix;
+
+    /**
+     * Set table prefix settings.
+     *
+     * @param string $prefix
+     */
+    public function setTablePrefix($prefix = '')
+    {
+        $this->prefix = $prefix;
+    }
+
+    /**
+     * Add creation and update timestampTz columns to the table.
+     *
+     * @return void
+     */
+    public function timestampsTz()
+    {
+        $this->timestampTz('created_at');
+
+        $this->timestampTz('updated_at');
+    }
+
+    /**
+     * Create a default index name for the table.
+     *
+     * @param  string $type
+     * @param  array $columns
+     * @return string
+     */
+    protected function createIndexName($type, array $columns)
+    {
+        $short_type = array(
+            'primary' => 'pk',
+            'foreign' => 'fk',
+            'unique'  => 'uk',
+        );
+
+        $type = isset($short_type[$type]) ? $short_type[$type] : $type;
+
+        $index = strtolower($this->prefix . $this->table . '_' . implode('_', $columns) . '_' . $type);
+
+        // max index name length is 30 chars
+        return substr(str_replace(['-', '.'], '_', $index), 0, 30);
+    }
+}

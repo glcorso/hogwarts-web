@@ -1,0 +1,374 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-usuario">
+
+
+        <div class="card card-outline-info" style="margin-bottom:10px;">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Lista de Preço por Serviço</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>Código*</label>
+                            <input type="text"
+                                name="cod_lista"
+                                class="form-control"
+                                placeholder="Informe o Código da Lista"
+                                value="{% if data.registro.cod_lista is defined %}{{data.registro.cod_lista}}{% endif %}"
+                                required
+                                maxlength="10"
+                                autofocus />
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="form-group">
+                            <label>Descrição*</label>
+                            <input type="text"
+                                name="descricao"
+                                class="form-control"
+                                placeholder="Informe a Descrição"
+                                value="{% if data.registro.descricao is defined %}{{data.registro.descricao}}{% endif %}"
+                                required
+                                maxlength="70"
+                                autofocus />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Status*</label>
+                            <select name="sit" class="form-control" required>
+                                <option value="1" {% if data.registro.sit is defined and data.registro.sit == '1' %} selected="selected" {% endif %}>Ativo</option>
+                                <option value="0" {% if data.registro.sit is defined and data.registro.sit == '0' %} selected="selected" {% endif %}>Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <div class="col-lg-12">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th width="90%">Agrupador</th>
+                                <th width="10%"></th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody class="agrupador">
+                            {% set idx = 7777 %}
+                            {% set v = 99999 %}
+                            {% for index, agrupador in data.registro.ValorServicoAgrup %}
+                                <tr data-index="{{idx}}" bgcolor="#ccc">
+                                    <td>
+                                        <select name="agrupadores[{{idx}}][agrupador_id]" class="form-control" required>
+                                            <option value="">Selecione um Agrupador</option>
+                                            {% for agrupadores in data.agrupadores %}
+                                                {%
+                                                    set agrupadorSelected = agrupador.agrupador_id == agrupadores.id
+                                                        ? 'selected="selected"'
+                                                        : ''
+                                                %}
+                                                <option value="{{agrupadores.id}}" {{agrupadorSelected}}>
+                                                    {{agrupadores.descricao}}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0);"
+                                           class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                
+                               
+                                <tr>
+                                    <td colspan="2">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="70%">Serviço</th>
+                                                    <th width="20%">Valor</th>
+                                                    <th width="10%"></th>
+                                                </tr>
+                                            </thead>
+                                          
+                                            <tbody class="servicos">
+                                                {% for serv in agrupador.ValorServicoPrecos %}
+                                                <tr data-index="{{v}}">
+                                                    <td>
+                                                        <select name="agrupadores[{{idx}}][precos][{{v}}][servico_id]" class="form-control" required>
+                                                            <option value="">Selecione um Serviço</option>
+                                                             
+                                                            {% for servico in data.servicos %}
+                                                                {%
+                                                                    set servicoSelected = serv.servico_id == servico.id ? 'selected="selected"' : ''
+                                                                %}
+                                                                <option value="{{servico.id}}" {{servicoSelected}}>
+                                                                   {{servico.cod_serv}} - {{servico.descricao}}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="agrupadores[{{idx}}][precos][{{v}}][preco]"
+                                                            class="form-control preco"
+                                                            data-affixes-stay="true"
+                                                            data-prefix="R$ "
+                                                            data-thousands="."
+                                                            data-decimal=","
+                                                            value="{{serv.preco|number_format('2',',','.')}}"
+                                                            required />
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+                                                {% set v = v + 1 %}
+                                                {% endfor %}
+
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td><a href="javascript:void(0);" class="btn btn-success btn-adicionar-linha align-self-center p-2" data-idx-agrup="{{idx}}"><i class="fa fa-plus"></i> Adicionar Serviço</a></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </td>
+                                </tr>
+                            {% set idx = idx + 1 %}
+                            {% else %}
+                                <tr data-index="0" bgcolor="#ccc">
+                                    <td>
+                                        <select name="agrupadores[0][agrupador_id]" class="form-control" required>
+                                            <option value="">Selecione um Agrupador</option>
+                                            {% for agrupador in data.agrupadores %}
+                                                <option value="{{agrupador.id}}" {{agrupadorSelected}}>
+                                                    {{agrupador.descricao}}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0);"
+                                            class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="70%">Serviço</th>
+                                                    <th width="20%">Valor</th>
+                                                    <th width="10%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="servicos">
+                                                <tr data-index="0">
+                                                    <td>
+                                                        <select name="agrupadores[0][precos][0][servico_id]" class="form-control" required>
+                                                            <option value="">Selecione um Serviço</option>
+                                                            {% for servico in data.servicos %}
+                                                                <option value="{{servico.id}}" {{servicoSelected}}>
+                                                                   {{servico.cod_serv}} - {{servico.descricao}}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text"
+                                                            name="agrupadores[0][precos][0][preco]"
+                                                            class="form-control preco"
+                                                            data-affixes-stay="true"
+                                                            data-prefix="R$ "
+                                                            data-thousands="."
+                                                            data-decimal=","
+                                                            value=""
+                                                            required />
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:void(0);"
+                                                            class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td><a href="javascript:void(0);" class="btn btn-success btn-adicionar-linha align-self-center p-2" data-idx-agrup="0"><i class="fa fa-plus"></i> Adicionar Serviço</a></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-right">
+                                    <a href="javascript:void(0);" class="btn btn-success btn-adicionar-linha-agrupador align-self-center p-2"><i class="fa fa-plus"></i> Adicionar Agrupador</a>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script id="novoPrecoPorServico" type="text/template">
+        <tr data-index="@index">
+            <td>
+                <select name="agrupadores[@idxAgrup][precos][@index][servico_id]" class="form-control">
+                    <option value="">Selecione um Serviço</option>
+                    {% for servico in data.servicos %}
+                        <option value="{{servico.id}}" {{servicoSelected}}>
+                          {{servico.cod_serv}} - {{servico.descricao}}
+                        </option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <input type="text"
+                       name="agrupadores[@idxAgrup][precos][@index][preco]"
+                       class="form-control preco"
+                       data-affixes-stay="true"
+                       data-prefix="R$ "
+                       data-thousands="."
+                       data-decimal=","
+                       value="" />
+            </td>
+            <td>
+                <a href="javascript:void(0);"
+                    class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+    </script>
+    <script id="novoPrecoAgrupador" type="text/template">
+        <tr data-index="@index" bgcolor="#ccc">
+            <td>
+                <select name="agrupadores[@index][agrupador_id]" class="form-control" required>
+                    <option value="">Selecione um Agrupador</option>
+                    {% for agrupador in data.agrupadores %}
+                        <option value="{{agrupador.id}}" {{agrupadorSelected}}>
+                            {{agrupador.descricao}}
+                        </option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <a href="javascript:void(0);"
+                    class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th width="70%">Serviço</th>
+                            <th width="20%">Valor</th>
+                            <th width="10%"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="servicos">
+                        <tr data-index="@index">
+                            <td>
+                                <select name="agrupadores[@index][precos][@idxlinha][servico_id]" class="form-control" required>
+                                    <option value="">Selecione um Serviço</option>
+                                    {% for servico in data.servicos %}
+                                        <option value="{{servico.id}}" {{servicoSelected}}>
+                                           {{servico.cod_serv}} - {{servico.descricao}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text"
+                                    name="agrupadores[@index][precos][@idxlinha][preco]"
+                                    class="form-control preco"
+                                    data-affixes-stay="true"
+                                    data-prefix="R$ "
+                                    data-thousands="."
+                                    data-decimal=","
+                                    value=""
+                                    required />
+                            </td>
+                            <td>
+                                <a href="javascript:void(0);"
+                                    class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><a href="javascript:void(0);" class="btn btn-success btn-adicionar-linha align-self-center p-2" data-idx-agrup="@index"><i class="fa fa-plus"></i> Adicionar Serviço</a></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </td>
+        </tr>
+    </script>
+{% endblock %}

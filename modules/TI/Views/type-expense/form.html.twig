@@ -1,0 +1,52 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+    
+     <div class="card card-outline-info">
+        <div class="card-header">
+            <h4 class="m-b-0 text-white">Tipos de Despesas</h4>
+        </div>
+        <div class="card-body">
+
+        <form action="/ti/type-expenses/form" method="post" role="form" class="main-form p-bottom-40">
+
+        
+
+            {% if expense.id is defined %}
+                <input type="hidden" name="id" value="{{expense.id}}">
+            {% endif %}
+
+            <div class="form-group">
+                <label>Nome*</label>
+                <input type="text" name="name" class="form-control" placeholder="Informe o nome" value="{% if expense.name is defined %}{{expense.name}}{% endif %}" data-myrules="required">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="ON" {% if expense.status is defined and expense.status == 'ON' %} selected="selected" {% endif %}>Ativo</option>
+                    <option value="OFF" {% if expense.status is defined and expense.status == 'OFF' %} selected="selected" {% endif %}>Inativo</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-default btn-success margin-r-15"><i class="fa fa-check"></i> {% if expense.id is defined %} Editar {% else %} Adicionar {% endif %}</button>
+            <a href="/type-expenses" class="btn btn-secondary">Cancelar</a>
+
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <div class="card card-outline-info">
+        <div class="card-header">
+            <h4 class="m-b-0 text-white">Parâmetro</h4>
+        </div>
+        <div class="card-body">
+
+            <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Grupo*</label>
+                            <input type="text" name="grupo" class="form-control" value="{% if data.registro.grupo is defined %}{{data.registro.grupo}}{% endif %}" data-myrules="required" tabindex="1" autofocus disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Parâmetro*</label>
+                            <input type="text" name="parametro" class="form-control" value="{% if data.registro.parametro is defined %}{{data.registro.parametro}}{% endif %}" data-myrules="required" tabindex="2" disabled="disabled">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Descrição*</label>
+                            <textarea name="descricao" class="form-control" disabled="disabled" style="resize:none;">{% if data.registro.descricao is defined %}{{data.registro.descricao}}{% endif %}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Valor*</label>
+                            {% if data.registro.tipo == 'input' %}
+                                <input type="text" name="valor" class="form-control" value="{{data.registro.valor}}"/>
+                            {% elseif data.registro.tipo == 'text' %}
+                                <textarea name="valor" class="form-control" data-myrules="required" style="resize:none;">{% if data.registro.valor is defined and data.registro.esconde == 0 %}{{data.registro.valor}}{% endif %}</textarea>
+                            {% elseif data.registro.tipo == 'select' %}
+                                <select name="valor[]" class="form-control select2" multiple="multiple">
+                                    {% for valor in data.registro.valor %}
+                                        <option value="{{valor}}" selected="selected">{{valor}}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        {% if data.permissao.permissao > 1 %}
+                            <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                                <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                            </button>
+                        {% endif %}
+                        <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                            <i class="fa fa-times"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

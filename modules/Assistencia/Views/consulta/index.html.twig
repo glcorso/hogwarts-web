@@ -1,0 +1,273 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+    <div class="btn-table-up ">
+        <div class="row">
+            <div class="col-lg-10 mb-1">
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Filtros <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu animated" style="width: 540px; padding: 15px;">
+                        <form action="/{{data.modulo.url}}" method="get" role="form" class="form-filtro">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Protocolo</label>
+                                    <input type="text" name="protocolo" class="form-control" value="{% if data.filtros.protocolo is defined %}{{data.filtros.protocolo}}{% endif %}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Data</label>
+                                    <input type="text" name="data" class="form-control" value="{% if data.filtros.data is defined %}{{data.filtros.data}}{% endif %}">
+                                    <small>Para utilizar intervalos, utilize o formato dd/mm/yyyy|dd/mm/yyyy</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Data Recebimento</label>
+                                    <input type="text" name="data_recebimento" class="form-control" value="{% if data.filtros.data_recebimento is defined %}{{data.filtros.data_recebimento}}{% endif %}">
+                                    <small>Para utilizar intervalos, utilize o formato dd/mm/yyyy|dd/mm/yyyy</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Cliente</label>
+                                    <select name="cliente_id" id="select-cliente-interno" class="form-control">
+                                        {% if data.filtros.cliente_id is defined %}
+                                            <option value="{{data.filtros.cliente_id}}">
+                                                {{data.filtros.cod_cli_assistencia}} - {{data.filtros.descricao_cli_assistencia}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Cliente Origem</label>
+                                    <select name="cliente_origem_id" id="select-cliente" class="form-control">
+                                        {% if data.filtros.cliente_origem_id is defined %}
+                                            <option value="{{data.filtros.cliente_origem_id}}">
+                                                {{data.filtros.cod_cli_origem}} - {{data.filtros.descricao_cli_origem}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                    
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Nro. Série</label>
+                                     <input type="text" name="serie" class="form-control" value="{% if data.filtros.serie is defined %}{{data.filtros.serie}}{% endif %}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Sequencial</label>
+                                     <input type="text" name="sequencial" class="form-control" value="{% if data.filtros.sequencial is defined %}{{data.filtros.sequencial}}{% endif %}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Nota Fiscal</label>
+                                     <input type="text" name="nota_fiscal" class="form-control" value="{% if data.filtros.nota_fiscal is defined %}{{data.filtros.nota_fiscal}}{% endif %}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Produto</label>
+                                    <select name="item_id" id="select-item" class="form-control" >
+                                        {% if data.filtros.item_id is defined %}
+                                            <option value="{{data.filtros.item_id}}">
+                                                {{data.filtros.cod_item}} - {{data.filtros.desc_tecnica}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Responsável</label>
+                                    <select name="responsavel_id" id="select-cliente" class="form-control">
+                                        <option value="TODOS">Todos</option>
+                                        {% for u in data.usuarios %}
+                                            <option value="{{u.id}}" {% if data.filtros.responsavel_id != null and data.filtros.responsavel_id == u.id %} selected="selected" {% endif %}> {{u.nome}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Motivo</label>
+                                    <select name="motivo_id" id="select-motivo" class="form-control">
+                                        {% if data.filtros.motivo_id is defined %}
+                                            <option value="{{data.filtros.motivo_id}}">
+                                                {{data.filtros.cod_motivo}} - {{data.filtros.descricao_motivo}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Defeito</label>
+                                    <select name="defeito_principal_id" id="select-defeito"  class="form-control">
+                                        {% if data.filtros.defeito_principal_id is defined %}
+                                            <option value="{{data.filtros.defeito_principal_id}}">
+                                                {{data.filtros.cod_defeito}} - {{data.filtros.descricao_defeito}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Material Recebido</label>
+                                    <select name="material_recebido" id="select-motivo" class="form-control"> 
+                                        <option></option>
+                                        <option value="N"  {% if data.filtros.material_recebido is defined  and  data.filtros.material_recebido  == 'N' %} selected="selected" {% endif %} > Não </option>
+                                        <option value="S"  {% if data.filtros.material_recebido is defined  and  data.filtros.material_recebido  == 'S' %} selected="selected" {% endif %} > Sim </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Saída do Produto</label>
+                                    <select name="saida_produto" class="form-control">
+                                        <option></option>
+                                        <option value="EV" {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'EV'%} selected="selected" {% endif %}>Enviar nova e vender na Cidade</option>
+                                        <option value="AC" {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'AC'%} selected="selected" {% endif %}>Acerto Comercial, Vender na Cidade</option>
+                                        <option value="EN" {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'EN'%} selected="selected" {% endif %}>Enviar Nova e Sucatear</option>
+                                        <option value="JF" {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'JF'%} selected="selected" {% endif %}>Já foi, Sucatear</option>
+                                        <option value="AS" {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'AS'%} selected="selected" {% endif %}>Acerto Comercial, Sucatear</option>
+                                        <option value="MN" {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'MN'%} selected="selected" {% endif %}>Manutenção enviar a Mesma</option>
+                                        <option value="OA" {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'OA'%} selected="selected" {% endif %}>Orçamento Aprovado</option>
+                                        <option value="OR" {% if data.filtros.saida_produto is defined and data.filtros.saida_produto == 'OR'%} selected="selected" {% endif %}>Orçamento Reprovado</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Agrupador Item</label>
+                                    <select name="agrupador_item" class="form-control">
+                                       <option></option>
+                                       {% for agp in data.agrupadores_item %}
+                                            <option value="{{agp.obser}}" {% if data.filtros.agrupador_item is defined and data.filtros.agrupador_item == agp.obser %} selected="selected" {% endif %}>{{agp.obser}}</option>
+                                       {% endfor %}
+                                    </select>
+                                </div>
+
+                            </div>
+                           
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                       
+                                    <input type="submit" class="btn btn-success" value="Filtrar">
+                                    <a href="javascript:void(0);" class="btn btn-inverse waves-effect waves-light btn-limpar-filtro">Limpar Filtros</a>
+                                    {% if data.query_string is defined and data.query_string != null %}
+
+                                        <a class="btn btn-primary" href="/assistencia-tecnica/consulta/excel?{{data.query_string}}" target="_BLANK" >
+                                         <i class="fa fa-file-o"></i> Gerar Excel
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 mb-1">
+                {% if data.permissao.permissao > 1 %}
+                    <div class="text-right btn-table-up">
+                        <a class="btn btn-block btn-success waves-effect waves-light" href="/assistencia-tecnica/atendimento"><i class="fa fa-plus"></i> Adicionar</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="table-responsive">
+            <table class="table">
+            <thead>
+                <tr>
+                    <th width="10%">Protocolo</th>
+                    <th width="10%">Data</th>
+                    <th width="10%">Nro. Série</th>
+                    <th width="10%">Cliente</th>
+                    <th width="10%">Cliente Origem</th>
+                    <th width="10%">Responsável</th>
+                    <th width="10%">Status</th>
+                    <th width="10%">Data Recebimento</th>
+                    <th width="10%">Data Conclusão</th>
+                    <th width="10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data.resultado %}
+                    <tr {% if row.material_recebido == '1'%} bgcolor="#b4fdbf" {% endif %} >
+                        <td><a href="/assistencia-tecnica/atendimento/{{row.id}}" class="atalho">{{row.protocolo}}</a></td>
+                        <td>{{row.data}}</td>
+                        <td>{{row.serie}}</td>
+                        <td>{{row.cliente}}</td>
+                        <td>{{row.cod_cli_origem}} - {{row.descricao_cli_origem}}</td>
+                        <td>{{row.responsavel}}</td>
+                        <td><span class="label {{row.label_campo}}">{{row.descricao_status}}</span> </td>
+                        <td>{{row.recebido_em_char_min}}</td>
+                        <td>{% if row.status_id == '3' %}
+                                {{row.dt_ult_status}}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="text-nowrap text-right">
+                            {% if (row.bloqueia_campos == 1 and row.responsabilidade != null) or  row.bloqueia_campos == 0 %} 
+                                <a href="/assistencia-tecnica/atendimento/detalhes/{{row.id}}" class="btn btn-xs btn-success"> Detalhes </a>
+                            {% endif %}
+                            {% if row.status_id != '3' %}
+                            {% if row.material_recebido == '0' %}
+                            {% if usuario.setor_id == 5 or usuario.id == 1 %}
+                                <a href="javascript:void(0);" class="btn btn-xs m-l-10 btn-warning btn-confirma-recebimento" data-registro-id="{{row.id}}" data-usuario-id="{{usuario.id}}" data-protocolo="{{row.protocolo}}" data-material="{{row.cod_item}} - {{row.desc_tecnica}}" ><i class="fa fa-check"></i> Material Recebido</a>
+                            {% endif %}
+                            {% endif %}
+                            {% endif %}
+                            <a href="/assistencia-tecnica/atendimento/{{row.id}}" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-pencil text-inverse m-l-10"></i></a> 
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6" align="center">Nenhum registro encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+    {% if data.paginacao is defined and data.paginacao != null %}
+        <div class="row">
+            {% if data.paginacao.qtde != null %}
+                <div class="col-lg-4"><small>{{data.paginacao.qtde|raw}}</small></div>
+            {% endif %}
+            <div class="col-lg-8 text-align-right">{{data.paginacao.paginacao|raw}}</div>
+        </div>
+    {% endif %}
+
+    <div class="modal fade modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do Chamado de Assistência Técnica <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/{{data.modulo.url}}" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

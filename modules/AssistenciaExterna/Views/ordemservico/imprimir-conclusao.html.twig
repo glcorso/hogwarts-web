@@ -1,0 +1,282 @@
+{% extends 'baseImprimir.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        @media print and (orientation: portrait) {
+            /* landscape styles */
+        }
+        @page { margin: 0; }
+        body { margin: 1cm; }
+        @page {
+         /* size: A4;*/
+          margin: 11mm;
+        }
+    </style>
+    <style type="text/css">
+        table { page-break-inside:auto }
+        thead { display:table-row-group }
+        tfoot { display:table-footer-group }
+        .pagebreak { page-break-before: always; }
+        @media print {
+            .voltar {
+                display:none;
+            }
+        } 
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+   
+{% endblock %}
+
+{% block title %}Portal Resfri Ar | Powered By Lidere Sistemas{% endblock %}
+
+{% block content %}
+
+       
+
+        {#<pre>
+        {{dump(registro)}}#}
+        <div class="pagebreak">
+            <div class="voltar" >
+                <a href="/assistencia-externa/ordem-servico/pagina/1">
+                    <h4>Voltar</h4>
+                </a>
+                {% if data.arquivo_cla.arquivo == null %}
+                 <a href="javascript:void(0);" id="assinar">
+                    <h4>Assinar</h4>
+                </a>
+                {% endif %}
+            </div>
+            <div id="relatorio">
+                <input type="hidden" name="ordem_id" id="ordem_id" value="{{data.registro.id}}">
+                <input type="hidden" name="img" id="img" value="">
+                <input type="hidden" name="tipo_anexo" id="tipo_anexo" value="CL">
+
+       
+                <div class="col-lg-12">
+                    <div class="row" style="margin-top:50px;">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <img src="/images/{{empresa.diretorio}}/logo-login.png" width="60%">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="text-left">
+                                <h4><strong class="text-center">Ordem de Serviço - Devolução do Equipamento - {{data.registro.num_ordem}}</strong></h4>{{d|date('d/m/Y H:i:s')}}
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mb-3">
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Assistência Técnica </p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.assistencia.cliente_erp_cod_cli}} - {{data.registro.assistencia.cliente_erp_descricao}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Endereço</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.dados_assistencia.endereco}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>CNPJ/CPF:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.dados_assistencia.cpf_cnpj_format}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Cidade/Estado:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.dados_assistencia.cidade}}/{{data.registro.dados_assistencia.uf}}</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Telefone:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.dados_assistencia.telefone}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>CEP:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.dados_assistencia.cep}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>E-mail:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.dados_assistencia.e_mail}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Técnico:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.usuario.nome}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mb-3">
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Cliente </p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.nome_cliente}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Endereço</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.endereco}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>CNPJ/CPF:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.cpf_cnpj}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Cidade/Estado:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.cidade}}/{{data.registro.uf}}</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Telefone:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.telefone}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>CEP:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.cep}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>E-mail:</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.e_mail}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <hr class="mb-3">
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-6">  
+                            <div class="form-group">
+                                <strong><p>Equipamento </p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.item}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">  
+                            <div class="form-group">
+                                <strong><p>Número de Série</p></strong>
+                                <p style="background-color:#d8d8d8;">{{data.registro.serie}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2">  
+                            <div class="form-group">
+                                <strong><p>Garantia</p></strong>
+                                <p style="background-color:#d8d8d8;">{% if data.registro.garantia == 'S' %}Sim {% else %} Não {% endif %}</p>
+                            </div>
+                        </div>
+                    </div>
+                       
+                    <hr class="mb-3">
+                    <h6 class="mb-2" style="margin-left:10px;"><strong>Condições do Equipamento</strong></h6>
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-12">
+                            <p style="background-color:#d8d8d8;">{{data.registro.obs_cond_equip}}</p>
+                        </div>
+                    </div> 
+
+
+                    <hr class="mb-3">
+                    <h6 class="mb-2" style="margin-left:10px;"><strong>Defeito Informado pelo Cliente</strong></h6>
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-12">
+                            <p style="background-color:#d8d8d8;">{{data.registro.obs_relato_cli}}</p>
+                        </div>
+                    </div> 
+
+                    <hr class="mb-3">
+                    <h6 class="mb-2" style="margin-left:10px;"><strong>Defeito Constatado pelo Técnico</strong></h6>
+                    <div class="row" style="margin-top:5px;margin-left:10px;">
+                        <div class="col-md-12">
+                            <p style="background-color:#d8d8d8;">{{data.registro.obs_relato_tec}}</p>
+                        </div>
+                    </div> 
+
+
+                    <hr class="mb-3">
+                    <h6 class="mb-2" style="margin-left:10px;"><strong>Serviços Executados</strong></h6>
+                    {% for serv in data.servicos_solicitados %}
+                        <div class="row" style="margin-top:5px;margin-left:10px;">
+                            <div class="col-md-12">
+                                <p style="background-color:#d8d8d8;">{{serv.cod_serv}} - {{serv.desc_serv}}</p>
+                            </div>
+                        </div> 
+                    {% endfor %}
+                     
+                   
+                    <hr class="mb-3">
+                    <div class="row" style="margin-top:5px;margin-left:10px;margin-right:10px;">
+                        <div class="text-justify" style="word-wrap: break-word;">
+                          {{data.texto_devolucao_usuario|raw}}
+                        </div>
+                    </div> 
+                    
+
+                    <div class="row" style="margin-top:50px;margin-left:10px;">
+                        <div class="col-md-12 text-center">
+                            {% if data.arquivo_cla.arquivo != null %}
+                            <div class="text-center">
+                                <img src="/arquivos/assistencia_tecnica_ex/{{data.arquivo_cla.arquivo}}" width="30%">
+                            </div>
+                            {% else %}
+                                <div class="text-center">___________________________________</div>
+                            {% endif %}
+                            <div class="text-center">{{data.registro.nome_cliente}}</div>
+                            <div class="text-center">{{data.registro.cpf_cnpj}}</div>
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+      
+        <div id="previewImage">
+        </div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function () { window.print(); });
+</script>
+{% endblock %}

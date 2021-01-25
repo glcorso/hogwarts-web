@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block main %}
+
+    <div class="app">
+       {% block content %}
+         <div id="content" class="app-content" role="main">
+            <div class="box">
+                <div class="navbar md-whiteframe-z1 no-radius font-white" style="background-color: {{empresa.cor_principal}}">
+                   <a href="/home" class="navbar-brand" style="display: inline-block;">
+                        <img id="img_logo" class="img_menu" src="/images/{{empresa.diretorio}}/logo-header.png" >
+                    </a>
+                    <a md-ink-ripple  data-toggle="modal" data-target="#aside" class="navbar-item pull-left visible-xs visible-sm"><i class="mdi-navigation-menu i-24"></i></a>
+                    <ul class="nav nav-sm navbar-tool pull-right">
+                        <li class="p-top-18 p-right-15">
+                            Olá <strong>{{usuario.nome}}</strong>
+                        </li>
+                        <li>
+                            <a href="/logout" title="Sair do Portal">
+                                <i class="fa fa-power-off i-20"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="pull-right" ui-view="navbar@"></div>
+                </div>
+                <div class="box-row">
+                  <div class="box-cell">
+                     <div class="box-inner padding">
+                        <div class="row">
+                           <div class="col-lg-12 col-md-12 col-sm-12">
+                              {% block principal %}
+                              {% endblock %}
+                           </div>
+                        </div>
+                     </div>
+
+                  </div>
+               </div>
+            </div>
+         </div>
+      {% endblock %}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

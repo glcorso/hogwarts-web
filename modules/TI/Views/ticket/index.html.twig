@@ -1,0 +1,233 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    <div class="btn-table-up">
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Filtros <span class="caret"></span>
+                    </button>
+                    <div class="dropdown-menu animated" style="width: 680px; padding: 15px;">
+                        <form action="/ti/tickets" method="get" class="form-filtro" role="form">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Nro.</label>
+                                    <input name="id" type="text" class="form-control" id="pref-search" value="{% if search.id is defined %}{{search.id}}{% endif %}">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Título</label>
+                                    <input name="titulo" type="text" class="form-control" id="pref-search" value="{% if search.titulo is defined %}{{search.titulo}}{% endif %}">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <div class="input-group input-daterange">
+                                        <input type="text" id="date_start" name="date_start" class="form-control date_start" value="{% if search.date_start is defined %}{{search.date_start}}{% else %}{{filtros_default.start_date}}{% endif %}" placeholder="__/__/____" data-myrules="required">
+                                        <div class="input-group-addon">até</div>
+                                        <input type="text" id="date_end" name="date_end" class="form-control date_end" value="{% if search.date_end is defined %}{{search.date_end}}{% else %}{{filtros_default.end_date}}{% endif %}" placeholder="__/__/____" data-myrules="required">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Cliente</label>
+                                    <select name="company_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for company in options.companies %}
+                                            <option value="{{company.id}}" {% if search.company_id is defined and search.company_id == company.id %} selected="selected" {% endif %}>{{company.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Tipo</label>
+                                    <select name="type_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for type in options.types %}
+                                            <option value="{{type.id}}" {% if search.type_id is defined and search.type_id == type.id %} selected="selected" {% endif %}>{{type.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Status</label>
+                                    <select name="status_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for status in options.status %}
+                                            <option value="{{status.id}}" {% if search.status_id is defined and search.status_id == status.id %} selected="selected" {% endif %}>{{status.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Prioridade</label>
+                                    <select name="priority_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for priority in options.priorities %}
+                                            <option value="{{priority.id}}" {% if search.priority_id is defined and search.priority_id == priority.id %} selected="selected" {% endif %}>{{priority.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search">Responsável</label>
+                                    <select name="user_internal_id" class="form-control">
+                                        <option value=""></option>
+                                        {% for user in options.users %}
+                                            <option value="{{user.id}}" {% if search.user_internal_id is defined and search.user_internal_id == user.id %} selected="selected" {% endif %}>{{user.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" style="margin-right:0;" for="pref-search" >Categoria</label>
+                                    <select name="category" class="form-control">
+                                        <option value=""></option>
+                                            <option value="C" {% if search.category is defined and search.category == 'C' %} selected="selected" {% endif %}>Consultoria</option>
+                                            <option value="D" {% if search.category is defined and search.category == 'D' %} selected="selected" {% endif %}>Desenvolvimento</option>
+                                            <option value="S" {% if search.category is defined and search.category == 'S' %} selected="selected" {% endif %}>Suporte</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-success" value="Filtrar">
+                                    <a href="javascript:void(0);" class="btn btn-secondary btn-limpar-filtro">Limpar Filtros</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                {% if permissao.permissao > 1 %}
+                    <div class="text-right btn-table-up">
+                        <a class="btn btn-success" href="/ti/tickets/form"><i class="fa fa-plus"></i> Adicionar</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th width="50">Nro.</th>
+                            <th width="250">Título</th>
+                            <th width="100">Data</th>
+                            <th>Cliente</th>
+                            <th width="110">Tipo</th>
+                            <th width="90">Prioridade</th>
+                            <th width="120">Status</th>
+                            <th width="140"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in tickets %}
+                            <tr>
+                                <td><a href="/ti/tickets/form/{{row.id}}">{{row.id}}</a></td>
+                                <td>{{row.title}}</td>
+                                <td>{{row.created_at|date('d/m/Y')}}</td>
+                                <td>{{row.company_name}}</td>
+                                <td>{{row.type_name}}</td>
+                                <td>
+                                    {% if row.priority_id == 1 or row.priority_id == 4 %}
+                                        {% set style = 'label label-success' %}
+                                    {% elseif row.priority_id == 2 %}
+                                        {% set style = 'label label-warning' %}
+                                    {% else %}
+                                        {% set style = 'label label-danger' %}
+                                    {% endif %}
+                                    <label class="tag {{style}}">{{row.priority_name}}</label>
+                                </td>
+                                <td>
+                                    {% if row.status_id == 1 %}
+                                        {% set status_style = 'label label-primary' %}
+                                    {% elseif row.status_id == 2 %}
+                                        {% set status_style = 'label label-info' %}
+                                    {% elseif row.status_id == 3 %}
+                                        {% set status_style = 'label label-primary' %}
+                                    {% elseif row.status_id == 4 or row.status_id == 6 %}
+                                        {% set status_style = 'label label-success' %}
+                                    {% else %}
+                                        {% set status_style = 'label label-danger' %}
+                                    {% endif %}
+                                    <label class="tag {{status_style}}">{{row.status_name}}</label>
+                                </td>
+                                <td align="right">
+                                    <div>
+                                        {% if row.add_called == true and row.status.id != 6 %}
+                                            <a href="javascript:void(0);" data-id="{{row.id}}" class="btn-add-called" title="Adicionar Atendimento"><i class="fa fa-plus  text-inverse m-r-10"></i></a>
+                                        {% endif %}
+
+                                        <a href="/ti/tickets/form/{{row.id}}" class="" title="Editar"><i class="fa fa-pencil text-inverse m-r-10"></i></a>
+
+                                        {% if row.del_ticket == true %}
+                                            <a href="javascript:void(0);" class="btn-delete-modal" data-id="{{row.id}}" data-name="{{row.id}} - {{row.title}} ({{row.company_name}})" title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                        {% endif %}
+
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="10" align="center">Nenhum chamado encontrado. </td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do chamado <strong></strong>?<br><br>
+                    <span><label class="tag label label-danger">ATENÇÃO!</span><br>
+                    Confirmando a exclusão, não será possível ter qualquer registro deste chamado.
+                </div>
+                <div class="modal-footer">
+                    <form action="/ti/tickets/delete" method="post">
+                        <input type="hidden" name="id" value="">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-form-modal btn-success" data-loading-text="Processando...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'ticket/modal-add-called.html.twig' %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    {# <script src="/javascripts/myValidate.js" type="text/javascript"></script> #}
+    {# <script src="/javascripts/jquery.maskedinput.js" type="text/javascript"></script> #}
+    {# <script src="/javascripts/tickets.js" type="text/javascript"></script> #}
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-avisos" enctype="multipart/form-data">
+
+           
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Cadastro de Avisos</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Descrição*</label>
+                            <input type="text" name="descricao" class="form-control" placeholder="Informe a Descrição" value="{% if data.registro.descricao is defined %}{{data.registro.descricao}}{% endif %}" required="required" autofocus>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Texto*</label>
+                            <textarea id="texto" name="texto"  required="required" class="form-control redactor-avisos" style="height: 200px; resize: none;">{{data.registro.texto|raw}}</textarea>
+                        <p class="help-block">Pressione o Shift + Enter para linhas sem espaçamento.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Status*</label>
+                            <select name="status" class="form-control" required="required">
+                                <option value="A" {% if data.registro.status is defined and data.registro.status == 'A' %} selected="selected" {% endif %}>Ativo</option>
+                                <option value="I" {% if data.registro.status is defined and data.registro.status == 'I' %} selected="selected" {% endif %}>Inativo</option>
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="col-lg-12">
+                        
+                        <div class="form-group">
+                            <label style="display: block;">Setor</label>
+                            <select name="setor_ids[]" class="form-control setor" multiple="multiple">
+                                <option></option>
+                                {% for setor in data.setores %}
+                                    <option value="{{setor.id}}" {% if setor.selecionado == true %} selected="selected" {% endif %}>{{setor.setor}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-12">    
+                        <div class="form-group">
+                            <label>Assistências Externas*</label>
+                             <select name="ate" class="form-control" required="required">
+                                <option value="S" {% if data.registro.ate is defined and data.registro.ate == 'S' %} selected="selected" {% endif %}>Sim</option>
+                                <option value="N" {% if data.registro.ate is defined and data.registro.ate == 'N' %} selected="selected" {% endif %}>Não</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Arquivos</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div class="form-group">
+
+                            <div class="form-group">
+                                <input id="upload" type="file" name="files[]" multiple>
+                            </div>
+
+                            {% if data.registro.arquivos is defined and data.registro.arquivos != null %}
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th width="80%">Arquivo</th>
+                                                    <th width="20%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for file in data.registro.arquivos %}
+                                                    <tr>
+                                                        <td>{{file.arquivo}}</td>
+                                                        <td align="right">
+                                                            <a href="/avisos/cadastro/arquivos/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+                                                            <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-name="{{file.arquivo}}" title="Excluir" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                {% else %}
+                                                    <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+
+    <div class="modal fade modal-delete-arquivo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do Arquivo <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/{{data.modulo.url}}/excluir/arquivo" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="relatorio_id" value="{{data.registro.id}}">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

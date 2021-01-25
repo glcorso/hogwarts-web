@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>{% block title %} Portal Resfri Ar | Powered by Lidere {% endblock %}</title>
+
+        {% block meta %}
+            <meta name="description" content="" />
+        {% endblock %}
+
+        {% block stylesheets %}
+            {#<link rel="stylesheet" type="text/css" href="/stylesheets/normalize.css" />
+            <link rel="stylesheet" type="text/css" href="/stylesheets/print.css" />#}
+            <link rel="stylesheet" type="text/css" href="/libs/jquery-confirm2/css/jquery-confirm.css?v={{v}}" />
+            {{loadcss()|raw}}
+        {% endblock %}
+    </head>
+    <body>
+
+    {% block content %}
+    {% endblock content %}
+
+    {% block javascripts %}
+        <script src="/stylesheets/assets/plugins/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="/libs/jquery-confirm2/js/jquery-confirm.js?v={{v}}"></script>
+        {{loadjs()|raw}}
+
+    {% endblock javascripts %}
+
+    </body>
+</html>

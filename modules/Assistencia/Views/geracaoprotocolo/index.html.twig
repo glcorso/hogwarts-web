@@ -1,0 +1,222 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block stylesheets %}
+	{{parent()}}
+	<style type="text/css">
+		.disabled-select {
+		   background-color:#d5d5d5;
+		   opacity:0.5;
+		   border-radius:3px;
+		   cursor:not-allowed;
+		   position:absolute;
+		   top:0;
+		   bottom:0;
+		   right:0;
+		   left:0;
+		}
+        .jconfirm{
+            z-index: 10!important;
+        }
+        .card {
+          margin-bottom: 10px!important;
+        }
+	</style>
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+
+<form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-atendimento" enctype="multipart/form-data">
+
+       
+    <div class="card card-outline-info">
+        <div class="card-header">
+            <h4 class="m-b-0 text-white">Geração Protocolo</h4>
+        </div>
+        <div class="card-body">
+
+            <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+            {% if data.registro.id is defined %}
+                <input type="hidden" name="id" id="campo-id" value="{{data.registro.id}}">
+                <input type="hidden" name="_METHOD" value="PUT"/>
+            {% endif %}
+
+            <div class="row">
+
+                <div class="col-lg-8">
+                    <div class="form-group">
+                        <label>Cliente*</label>
+                        <select name="cliente_assistencia_erp_id" id="select-cliente" class="form-control">
+                        </select>
+                        <input type="hidden" name="telefone" id="campo-telefone">
+                        <input type="hidden" name="e_mail" id="campo-email">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Nota Fiscal</label>
+                        <input type="text" name="nota_fiscal" class="form-control" placeholder="Informe a Nota Fiscal">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="itens">
+        <div class="reg-0">
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Item #1</h4>
+            </div>
+            <div class="card-body card-itens" >
+                <div class="row row-itens">
+
+                    <div class="col-lg-6">
+                        <div class="form-group" id="grupo-serie-0">
+                            <input type="hidden" name="item[0][serie_id]" id="campo-numero-serie-id-0" value="{{data.registro.serie_id}}">
+                            <label>Número de Série</label>
+                            <input type="text" name="item[0][numero_serie]" {% if data.registro.bloqueia_campos == '1' %} readonly="readonly" {% endif %} data-linha="0" id="campo-numero-serie-0"  class="form-control campo-numero-serie" placeholder="Informe o Número de Série" value="{% if data.registro.serie is defined %}{{data.registro.serie}}{% endif %}">
+                            <div class="form-control-feedback" style="display:none;" id="warning-serie-0" >Desculpe, mas este número de série não existe!</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group" id="grupo-sequencial-0">
+                            <input type="hidden" name="item[0][sequencial_id]" id="campo-sequencial-id-0" value="{{data.registro.sequencial_id}}">
+                            <label>Sequencial</label>
+                            <input type="text"  name="item[0][sequencial]" data-linha="0" maxlength="100" class="form-control campo-sequencial" id="campo-sequencial-0"  placeholder="Informe o Sequencial" value="{% if data.registro.sequencial is defined %}{{data.registro.sequencial}}{% endif %}">
+                            <div class="form-control-feedback" style="display:none;" id="warning-sequencial-0">Desculpe, mas este sequencial não existe!</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Produto</label>
+                            <select name="item[0][item_id]" id="select-item-0"  class="form-control" required="required">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                    	<div class="form-group">
+                            <label>Data Fabricação</label>
+                            <input type="text" name="item[0][dt_fabricacao]"  id="campo-data-fab-0"  class="form-control data" placeholder="Informe a Data de Fabricação" value="{% if data.registro.dt_fabricacao is defined %}{{data.registro.dt_fabricacao}}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                    	<div class="form-group">
+                            <label>Data da Compra</label>
+                            <input type="text" name="item[0][dt_compra]"  id="campo-data-compra-0"  class="form-control data" placeholder="Informe a Data de Compra" value="{% if data.registro.dt_compra is defined %}{{data.registro.dt_compra}}{% endif %}">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Cliente Origem</label>
+                            <select name="item[0][cliente_origem_id]" id="select-cliente-0"  class="form-control">
+                            </select>
+                        </div>
+                    </div>
+
+                
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Motivo*</label>
+                            <select name="item[0][motivo_id]" id="select-motivo-0" required="required" class="form-control">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12" id="div-defeito-0" {% if data.registro.defeito_principal_id == null %} style="display:none;" {% endif %}>
+                        <div class="form-group">
+                            <label>Defeito*</label>
+                            <select name="item[0][defeito_principal_id]" id="select-defeito-0"  class="form-control">
+                            </select>
+                        </div>
+                    </div>                  
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="card card-body" style="margin-botton:-20px;">
+        <div class="row">
+            <div class="col-lg-12 text-right">
+                <a href="javascript:void(0);" class="btn btn-success btn-md mb-2 btn-adicionar-produto"><i class="fa fa-plus"></i> Adicionar Produto </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Responsável*</label>
+                    <select name="responsavel_id" {% if data.registro.bloqueia_campos == '1' %} readonly="readonly" {% endif %} class="form-control" required="required">
+                        <option></option>
+                        {% for u in data.usuarios %}
+                            <option value="{{u.id}}" {% if data.registro.responsavel_id != null and u.id == data.registro.responsavel_id %} selected="selected" {% elseif usuario.id == u.id %} selected="selected"  {% endif %}>{{u.nome}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+             <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Status*</label>
+                    <select name="status_id" class="form-control" required="required">
+                        <option></option>
+                        {% for status in data.status %}
+                            <option value="{{status.id}}" {% if data.registro.status_id != null and data.registro.status_id == status.id %} selected="selected"  {% elseif data.registro.status_id == null and status.id == data.status_novo_chamado %} selected="selected" {% endif %}>{{status.descricao}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+   
+
+    <div class="card card-body" style="margin-top: -20px;">
+        <div class="row">
+            <div class="col-lg-12">
+                {% if data.permissao.permissao > 1 %}
+                    <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                        <i class="fa fa-check"></i> Adicionar
+                    </button>
+                {% endif %}
+                <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                    <i class="fa fa-times"></i> Cancelar
+                </a>
+                <a href="javascript:(void);" id="btn-limpar-campos" class="btn btn-inverse waves-effect waves-light">
+                    <i class="fa fa-refresh"></i> Limpar Campos
+                </a>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+{% endblock principal %}
+
+{% block javascripts %}
+   {{parent()}}
+{% endblock %}

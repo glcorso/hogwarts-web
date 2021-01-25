@@ -1,0 +1,154 @@
+{% extends 'baseImprimir.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        @media print and (orientation: portrait) {
+            /* landscape styles */
+        }
+        @page { margin: 0; }
+        body { margin: 1cm; }
+    </style>
+    <style type="text/css">
+        table { page-break-inside:auto }
+        thead { display:table-row-group }
+        tfoot { display:table-footer-group }
+        .pagebreak { page-break-before: always; } 
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   
+   
+{% endblock %}
+
+{% block title %}Portal Resfri Ar | Powered By Lidere Sistemas{% endblock %}
+
+{% block content %}
+    
+    <div class="pagebreak">
+        <div class="col-lg-12">
+            <div class="row" style="margin-top:50px;">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <img src="/images/{{empresa.diretorio}}/logo-login.png" width="60%">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="text-left">
+                        <h4><strong class="text-center">Protocolo #{{data.registro.protocolo}} - {{data.registro.criado_em|date('d/m/Y H:i:s')}}</strong></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:50px;margin-left:10px;">
+                <div class="col-md-6">  
+                    <div class="form-group">
+                        <strong><p>Cliente</p></strong>
+                        <p style="background-color:#d8d8d8;">{{data.registro.cliente}}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">  
+                    <div class="form-group">
+                        <strong><p>CPF/CNPJ</p></strong>
+                        <p style="background-color:#d8d8d8;">{{data.registro.cpf_cnpj}}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">  
+                     <div class="form-group">
+                        <strong><p>Telefone</p></strong> 
+                        {% if data.registro.telefone_cli_envio != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.telefone_cli_envio}}</p> 
+                        {% elseif data.registro.telefone_cli_origem != null %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.telefone_cli_origem}}</p> 
+                        {% else %}
+                            <p style="background-color:#d8d8d8;">{{data.registro.telefone}}</p> 
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">  
+                    <div class="form-group">
+                        <strong><p>Modelo</p></strong>
+                        <p style="background-color:#d8d8d8;">{{data.registro.cod_item}} - {{data.registro.desc_tecnica}}</p>
+                    </div>
+                </div>
+                <div class="col-md-3">  
+                     <div class="form-group">
+                        <strong><p>Dt. Fabricação</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.dt_fabricacao|date('d/m/Y')}}</p> 
+                    </div>
+                </div>
+                <div class="col-md-3">  
+                     <div class="form-group">
+                        <strong><p>Dt. Compra</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.dt_compra|date('d/m/Y')}}</p> 
+                    </div>
+                </div>
+                <div class="col-md-3">  
+                     <div class="form-group">
+                        <strong><p>Número de Série</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.serie}}</p> 
+                   </div>
+                </div>
+                <div class="col-md-3">  
+                     <div class="form-group">
+                        <strong><p>Sequencial</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.sequencial}}</p> 
+                   </div>
+                </div>
+
+                <div class="col-md-12">  
+                     <div class="form-group">
+                        <strong><p>Motivo Informado</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.cod_motivo}} - {{data.registro.descricao_defeito}}</p> 
+                   </div>
+                </div>
+
+                <div class="col-md-12">  
+                     <div class="form-group">
+                        <strong><p>Defeito Informado</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.cod_defeito}} - {{data.registro.descricao_motivo}}</p> 
+                   </div>
+                </div>
+
+
+                <div class="col-md-12">  
+                     <div class="form-group">
+                        <strong><p>Problema Relatado</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.obs_cliente}}</p> 
+                   </div>
+                </div>
+
+                <div class="col-md-12">  
+                     <div class="form-group">
+                        <strong><p>Retratação Resfri Ar</p></strong> 
+                        <p style="background-color:#d8d8d8;">{{data.registro.obs_interna}}</p> 
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% set v = 1 %}
+    {% for arquivos in data.arquivos %}
+        <div class="pagebreak">
+            <div class="col-lg-12">
+                <div class="row" style="margin-top:50px;">
+                    
+                    <div class="col-md-12 text-center">
+                        <strong><p>Anexo {{v}}</p></strong>
+                        <img src="/arquivos/assistencia_tecnica/{{arquivos.arquivo}}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% set v = v + 1 %}
+    {% endfor %}
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function () { window.print(); });
+</script>
+{% endblock %}

@@ -1,0 +1,421 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+    <style type="text/css">
+        .hidden{
+            display:none;
+        }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-usuario" enctype="multipart/form-data">
+
+           
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Relatório de Visitas - Montadoras</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" id="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="prospect_id" id="prospect_id" value="{{data.registro.prospect_id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+                <input type="hidden" name="setor" value="{{data.setor}}">
+                <input type="hidden" name="tipo_rel" value="M">
+
+                <div class="row">
+
+                    {% if data.registro.id is defined and data.registro.est_id != null %}
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                 <label>Nro</label>
+                                 <input type="text" name="nro" value="{{data.registro.nro}}" class="form-control" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                 <label>Vendedor</label>
+                                 <input type="text" name="vend_nome" value="{{data.registro.vendedor}}" class="form-control" disabled="disabled">
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente" {% if data.registro.id is defined and data.registro.est_id == null %} style="display:none;" {% endif %} >
+                            <label>Cliente*</label>
+                            <select name="est_id" id="select-cliente" class="form-control" required="required"> 
+                                {% if data.registro.est_id is defined %}
+                                    <option value="{{data.registro.est_id}}">
+                                        {{data.registro.codigo_cliente}} - {{data.registro.descricao_cliente}}
+                                    </option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %}>
+                            <label>Razão Social*</label>
+                            <input type="text" name="razao_social" id="razao_social" class="form-control" maxlength="100" {% if data.registro.razao_social_prospect is defined and data.registro.razao_social_prospect != null %}value="{{data.registro.razao_social_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Nome Fantasia</label>
+                            <input type="text" name="nome_fantasia" id="nome_fantasia" class="form-control" maxlength="100" {% if data.registro.nome_fantasia_prospect is defined and data.registro.nome_fantasia_prospect != null %}value="{{data.registro.nome_fantasia_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>CNPJ/CPF</label>
+                            <input type="text" name="cnpj_cpf" id="cnpj_cpf" class="form-control" maxlength="100" {% if data.registro.cnpj_cpf_prospect is defined and data.registro.cnpj_cpf_prospect != null %}value="{{data.registro.cnpj_cpf_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Cidade*</label>
+                            <input type="text" name="cidade" id="cidade" class="form-control" maxlength="100" {% if data.registro.cidade_prospect is defined and data.registro.cidade_prospect != null %}value="{{data.registro.cidade_prospect}}"{% endif %} >
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Estado*</label>
+                            <select name="uf" class="form-control" id="uf">
+                                <option value=""></option>
+                                <option value="AC" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'AC' %} selected="selected" {% endif %}>Acre</option>
+                                <option value="AL" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'AL' %} selected="selected" {% endif %}>Alagoas</option>
+                                <option value="AP" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'AP' %} selected="selected" {% endif %}>Amapá</option>
+                                <option value="AM" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'AM' %} selected="selected" {% endif %}>Amazonas</option>
+                                <option value="BA" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'BA' %} selected="selected" {% endif %}>Bahia</option>
+                                <option value="CE" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'CE' %} selected="selected" {% endif %}>Ceará</option>
+                                <option value="DF" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'DF' %} selected="selected" {% endif %}>Distrito Federal</option>
+                                <option value="ES" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'ES' %} selected="selected" {% endif %}>Espírito Santo</option>
+                                <option value="GO" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'GO' %} selected="selected" {% endif %}>Goiás</option>
+                                <option value="MA" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'MA' %} selected="selected" {% endif %}>Maranhão</option>
+                                <option value="MT" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'MT' %} selected="selected" {% endif %}>Mato Grosso</option>
+                                <option value="MS" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'MS' %} selected="selected" {% endif %}>Mato Grosso do Sul</option>
+                                <option value="MG" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'MG' %} selected="selected" {% endif %}>Minas Gerais</option>
+                                <option value="PA" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PA' %} selected="selected" {% endif %}>Pará</option>
+                                <option value="PB" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PB' %} selected="selected" {% endif %}>Paraíba</option>
+                                <option value="PR" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PR' %} selected="selected" {% endif %}>Paraná</option>
+                                <option value="PE" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PE' %} selected="selected" {% endif %}>Pernambuco</option>
+                                <option value="PI" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'PI' %} selected="selected" {% endif %}>Piauí</option>
+                                <option value="RJ" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RJ' %} selected="selected" {% endif %}>Rio de Janeiro</option>
+                                <option value="RN" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RN' %} selected="selected" {% endif %}>Rio Grande do Norte</option>
+                                <option value="RS" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RS' %} selected="selected" {% endif %}>Rio Grande do Sul</option>
+                                <option value="RO" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RO' %} selected="selected" {% endif %}>Rondônia</option>
+                                <option value="RR" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'RR' %} selected="selected" {% endif %}>Roraima</option>
+                                <option value="SC" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'SC' %} selected="selected" {% endif %}>Santa Catarina</option>
+                                <option value="SP" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'SP' %} selected="selected" {% endif %}>São Paulo</option>
+                                <option value="SE" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'SE' %} selected="selected" {% endif %}>Sergipe</option>
+                                <option value="TO" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'TO' %} selected="selected" {% endif %}>Tocantins</option>
+                                <option value="EX" {% if data.registro.uf_prospect is defined and data.registro.uf_prospect == 'EX' %} selected="selected" {% endif %}>Exterior</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>País</label>
+                            <input type="text" class="form-control" maxlength="40" name="pais" {% if data.registro.pais is defined and data.registro.pais != null %}value="{{data.registro.pais}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Telefone*</label>
+                            <input type="text" name="telefone"   class="form-control" maxlength="30" {% if data.registro.telefone_prospect is defined and data.registro.telefone_prospect != null %}value="{{data.registro.telefone_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>Celular</label>
+                            <input type="text" name="tel_celular"  class="form-control" maxlength="30" {% if data.registro.tel_celular_prospect is defined and data.registro.tel_celular_prospect != null %}value="{{data.registro.tel_celular_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente-novo" {% if data.registro.id is not defined or ( data.registro.id is defined and data.registro.est_id != null) %} style="display:none;" {% endif %} >
+                            <label>E-mail</label>
+                            <input type="email" name="e_mail" id="e_mail" class="form-control" maxlength="100" {% if data.registro.e_mail_prospect is defined and data.registro.e_mail_prospect != null %}value="{{data.registro.e_mail_prospect}}"{% endif %}>
+                        </div>
+                    </div>
+
+                    {% if data.registro.id is not defined %}
+                    <div class="col-lg-12">
+                        <div class="form-group div-cliente">
+                            <button type="button" class="btn btn-success" id="btn-cliente-novo"><i class="fa fa-plus"></i> Novo Cliente</button>
+                        </div>
+                        <div class="form-group div-cliente-novo" style="display:none;">
+                            <button type="button" class="btn btn-success" id="btn-cliente-existente"><i class="fa fa-arrow-left"></i> Cliente Existente</button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>   
+
+                <hr class="mb-4">
+                <h4 class="mb-3"><strong>Data Visita</strong></h4>
+                <div class="row mt-4">
+                     <div class="col-md-4 mb-3">
+                        <input type="text" name="data_visita" class="form-control data" required="required" value="{{data.registro.data_visita_char}}">
+                    </div>
+                </div>
+
+
+
+                <hr class="mb-4">
+                <h4 class="mb-3"><strong>Motivo</strong></h4>
+                <div class="row mt-4">
+                     <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="check_motivo_com" value="S" {% if data.registro.check_motivo_com is defined and data.registro.check_motivo_com == 'S' %}checked="checked" {% endif %}  id="check-comercial">
+                            <label class="custom-control-label" for="check-comercial">Comercial</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="check_motivo_eng" value="S" {% if data.registro.check_motivo_eng is defined and data.registro.check_motivo_eng == 'S' %} checked="checked" {% endif %} id="check-assistencia">
+                            <label class="custom-control-label" for="check-assistencia">Engenharia</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="check_motivo_trei" value="S" {% if data.registro.check_motivo_trei is defined and data.registro.check_motivo_trei == 'S' %} checked="checked" {% endif %} id="check-treinamentos">
+                            <label class="custom-control-label" for="check-treinamentos">Treinamentos</label>
+                        </div>
+                    </div>
+                   
+                    <div class="col-md-3 mb-3">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="check_motivo_out"  value="S" {% if data.registro.check_motivo_out is defined and data.registro.check_motivo_out == 'S' %}checked="checked" {% endif %} id="check-outros">
+                            <label class="custom-control-label" for="check-outros">Outros</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <label>Descreva</label>
+                        <textarea class="form-control" disabled="disabled" id="descreva_motivo" name="obs_motivo_outros" rows="3" style="resize:none;">{% if data.registro.obs_motivo_outros is defined and data.registro.obs_motivo_outros != null %}{{data.registro.obs_motivo_outros}}{% endif %}</textarea>
+                    </div>
+                </div>             
+
+                <hr class="mb-4">
+                <h4 class="mb-3 mt-2"><strong>Participantes</strong></h4>
+                <div class="div-participantes">
+                    <div class="row row-participantes-0 hidden">
+                        <table class="table">
+                            <tr>
+                                <th width="30%">Nome*</th>
+                                <th width="30%">E-mail</th>
+                                <th width="15%">Setor</th>
+                                <th width="20%">Empresa</th>
+                                <th width="5%"></th>
+                            </tr>
+                            <tr><td>
+                                <input type="text" name="participante[0][nome]" disabled="disabled" required="required" class="form-control nome">
+                                <div class="participante-query" style="display:none;">
+                                    <select name="participante[0][participante_id]" disabled="disabled" required="required" class="form-control select-participantes"  style="width:50%;display:none;" data-id="0">
+                                    </select>
+                                </div>
+                                </td>
+                                <td>
+                                    <input type="email" name="participante[0][e_mail]" disabled="disabled" class="form-control email">
+                                </td>
+                                <td>
+                                    <input type="text" name="participante[0][setor]" disabled="disabled" class="form-control setor">
+                                </td>
+                                 <td>
+                                    <input type="text" name="participante[0][cliente_descritivo]" disabled="disabled" class="form-control cliente_descritivo">
+                                    <div class="cliente-existente" style="display:none;">
+                                    <select name="participante[0][cliente_id]" disabled="disabled" required="required" class="form-control select-cliente-existente"  style="width:50%;display:none;"></select>
+                                    </div>
+                                    <small><a href="javascript:void(0);" class="link link-cliente-existente">Selecionar Cliente Existente</a></small>
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0);" class="btn btn-success btn-xs btn-select-participante align-self-center p-2" title="Selecionar Participante"><i class="fa fa-refresh"></i></a>
+                                    <a href="javascript:void(0);" disabled="disabled" class="btn btn-xs btn-danger btn-remover-participante disabled align-self-center p-2"><i class="fa fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    {% if data.registro.participantes is defined and data.registro.participantes != null %}     
+                        {% set x = 1 %}
+                        {% for participante in data.registro.participantes %}
+                            <div class="row row-participantes-{{x}}">
+                                <table class="table">
+                                    <tr>
+                                        <th width="30%">Nome*</th>
+                                        <th width="30%">E-mail</th>
+                                        <th width="15%">Setor</th>
+                                        <th width="20%">Empresa</th>
+                                        <th width="5%"></th>
+                                    </tr>
+                                    <tr><td>
+                                            <select name="participante[{{x}}][participante_id]" required="required" class="form-control select-participantes select-participantes-table"  style="width:100%;" data-id="{{x}}">
+                                                <option value="{{participante.participante_id}}">{{participante.nome}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="email" name="participante[{{x}}][e_mail]" class="form-control email" value="{{participante.e_mail}}">
+                                        </td>
+                                        <td>
+                                            <input type="text" name="participante[{{x}}][setor]" class="form-control setor" value="{{participante.setor}}">
+                                        </td>
+                                        <td>
+                                            <input type="text" {% if participante.cliente_id is defined and participante.cliente_id != null %} style="display:none;" {% endif %} name="participante[{{x}}][cliente_descritivo]" class="form-control cliente_descritivo" value="{{participante.cliente_descritivo}}">
+                                            <div class="cliente-existente" {% if participante.cliente_id == null  %} style="display:none;" {% endif %}>
+                                                <select name="participante[{{x}}][cliente_id]" 
+                                                required="required" class="form-control select-cliente-existente select-cliente-existente-table "  {% if  participante.cliente_descritivo == null and participante.cliente_id == null %} style="display:none;" {% endif %}>
+                                                    <option value="{{participante.cliente_id}}">{{participante.cod_cli}} - {{participante.descricao}}</option>    
+                                                </select>
+                                            </div>
+                                            {% if  participante.cliente_descritivo == null and participante.cliente_id == null %} 
+                                                <small><a href="javascript:void(0);" class="link link-cliente-existente">Selecionar Cliente Existente</a></small>
+                                            {% else %}
+                                                <small><a href="javascript:void(0);" class="link link-novo-cliente">Incluir Cliente Novo</a></small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0);" class="btn btn-xs btn-danger btn-remover-participante align-self-center p-2"><i class="fa fa-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            {% set x = x + 1 %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+               
+                <div class="row mt-1">
+                    <div class="col-md-12 mt-1">
+                        <div class="float-md-right">
+                            <a href="javascript:void(0);" class="btn btn-success btn-xs btn-adicionar-participantes"><i class="fa fa-plus"></i> Adicionar</a>
+                        </div>
+                    </div>
+                </div> 
+               
+                <hr class="mb-4">
+                <h4 class="mb-3 mt-2"><strong>Ata Visita</strong></h4>
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <textarea name="obs_vendedor" id="editor1" maxlength="3999">{% if data.registro.obs_vendedor is defined and data.registro.obs_vendedor != null %}{{data.registro.obs_vendedor}}{% endif %}</textarea>
+                    </div>
+                </div> 
+
+                <h5 class="mb-2 mt-2"><strong>Anexos</strong></h5>
+                <hr class="mb-4">
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <input id="upload" type="file" accept="image/gif, image/jpeg, image/png, , image/jpg" {% if data.registro.bloqueia_campos == '1' %} disabled="disabled" {% endif %} name="files[]" multiple>
+                            </div>
+
+                            {% if data.arquivos is defined and data.arquivos != null %}   
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">    
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th width="40%">Arquivo</th>
+                                                    <th width="40%">Data</th>
+                                                    <th width="20%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for file in data.arquivos %}
+                                                    <tr>
+                                                        <td>{{file.arquivo}}</td>
+                                                        <td>{{file.criado_em|date("d/m/Y H:m:i")}}</td>
+                                                        <td align="right">
+                                                            <a href="/comercial/relatorio-visitas/arquivos/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+                                                            {% if data.setor != 'admin' and data.registro.altera == 'S' %}
+                                                            <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-name="{{file.arquivo}}" title="Excluir" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                            {% elseif data.setor == 'admin' %}
+                                                            <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-name="{{file.arquivo}}" title="Excluir" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% else %}
+                                                    <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                   
+                    {% if data.permissao.permissao > 1 and  data.setor != 'admin' %}
+                        {% if data.registro.criado_por == usuario.id or data.registro.id is not defined %}
+                                <button type="submit" id="btn-adicionar" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                                <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                                </button>
+                        {% endif %}
+                    {% elseif data.setor == 'admin' %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <div class="modal fade modal-delete-arquivo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do Arquivo <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/{{data.modulo.url}}/excluir/arquivo" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="relatorio_id" value="{{data.registro.id}}">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript">
+        var hora_ini = '{{data.hora_ini}}',
+            hora_fim = '{{data.hora_fim}}',
+            rel_id = '{{data.registro.id}}',
+            setor = '{{data.setor}}',
+            tipo_rel = 'mont';
+        CKEDITOR.replace( 'editor1' , {
+            removePlugins: [ 'ImageToolbar', 'ImageCaption', 'ImageStyle' ],
+            image: {}});
+    </script>
+{% endblock %}

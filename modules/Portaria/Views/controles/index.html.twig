@@ -1,0 +1,420 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+    {# inicio do forms #}
+    
+    <form action="javascript:void(0);" method="post" role="form" class="form-controle">
+
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white titulo">Controle de Entradas e Saídas</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" class="cadastro_id" name="id" value="">
+                
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Tipo*</label>
+                            <select name="tipo" class="limpa form-control tipo" required>
+                                <option disabled value="" {% if data.registro.tipo is not defined %} selected="selected" {% endif %}>Selecione um Tipo</option>
+                                <option value="1" {% if data.registro.tipo is defined and data.registro.tipo == '1' %} selected="selected" {% endif %}>Veículo Resfriar</option>
+                                <option value="0" {% if data.registro.tipo is defined and data.registro.tipo == '0' %} selected="selected" {% endif %}>Terceiro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="veiculo_resfriar" style="display: none;">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Funcionário*</label>
+                                <select name="funcionario_id" style="width:100%" class="limpa form-control funcionario funcionario-id-1 required_resfriar" id="">
+
+                                <option selected disabled value=""> Selecione o Funcionário</option>
+
+                                {% for funcionario in data.funcionarios %}
+                                    <option value="{{funcionario.id}}">{{funcionario.codigo}} - {{funcionario.descricao}}</option>
+                                {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Veículo*</label>
+                                <select name="veiculo_id" style="width:100%" class="limpa form-control veiculo-id-1 required_resfriar" id="">
+                                
+                                <option selected disabled value=""> Selecione o Veículo</option>
+
+                                {% for veiculo in data.veiculos %}
+                                    <option value="{{veiculo.id}}">{{veiculo.marca}}, {{veiculo.modelo}} ({{veiculo.placa}})</option>
+                                {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Destino*</label>
+                                <input type="text"
+                                    name="destino"
+                                    class="limpa form-control destino-1 required_resfriar"
+                                    placeholder="Informe o Destino"
+                                    value="{% if data.registro.destino is defined %}{{data.registro.destino}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Data e Hora de Saída*</label>
+                                <input type="text"
+                                    name="saida"
+                                    class="limpa form-control data saida-1 required_resfriar"
+                                    placeholder="Informe a data e hora"
+                                    value="{% if data.saida.saida is defined %}{{data.saida.saida}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                                    <button tipe="button" class="insere__data btn-agora-saida" >Agora</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 div-km-sai">
+                            <div class="form-group">
+                                <label>Quilometragem de Saída (Km)*</label>
+                                <input type="text"
+                                    name="km_saida"
+                                    class="limpa form-control km_saida-1 required_resfriar"
+                                    placeholder="Informe a Quilometragem de Saída"
+                                    value="{% if data.saida.km_saida is defined %}{{data.saida.km_saida}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 hora-retorno" style="display:none;">
+                            <div class="form-group">
+                                <label>Data e Hora de Retorno</label>
+                                <input type="text"
+                                    name="entrada"
+                                    class="limpa form-control data entrada-1"
+                                    placeholder="Informe a data e hora"
+                                    value="{% if data.registro.entrada is defined %}{{data.registro.entrada}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                                    <button tipe="button" class="insere__data">Agora</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 km-retorno" style="display:none;">
+                            <div class="form-group">
+                                <label>Quilometragem de Retorno (Km)</label>
+                                <input type="text"
+                                    name="km_entrada"
+                                    class="limpa form-control km_entrada-1"
+                                    placeholder="Informe a Quilometragem de Retorno"
+                                    value="{% if data.registro.km_entrada is defined %}{{data.registro.km_entrada}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="terceiro"  style="display: none;">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label>Placa*</label>
+                                <input type="text"
+                                    name="placa"
+                                    class="limpa form-control placa-0 required_terceiro"
+                                    placeholder="Informe a Placa"
+                                    value="{% if data.registro.placa is defined %}{{data.registro.placa}}{% endif %}"
+                                    autofocus
+                                    maxlength="10"
+                                    />
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                <label>Nome da Pessoa*</label>
+                                <input type="text"
+                                    name="pessoa_terceiro"
+                                    class="limpa form-control pessoa-0 required_terceiro"
+                                    placeholder="Informe o Nome da Pessoa"
+                                    value="{% if data.registro.pessoa is defined %}{{data.registro.pessoa}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Veículo*</label>
+                                <input type="text"
+                                    name="empresa"
+                                    class="limpa form-control veiculo-0 required_terceiro"
+                                    placeholder="Informe o Veículo"
+                                    value="{% if data.registro.veiculo is defined %}{{data.registro.veiculo}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Empresa*</label>
+                                <input type="text"
+                                    name="empresa"
+                                    class="limpa form-control empresa-0 required_terceiro"
+                                    placeholder="Informe a Empresa"
+                                    value="{% if data.saida.empresa is defined %}{{data.saida.empresa}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Assunto*</label>
+                                 <select name="assunto_id" style="width:100%" class="limpa form-control assunto-id-0 required_terceiro" id="">
+                                
+                                <option selected disabled value=""> Selecione o Assunto</option>
+
+                                {% for assunto in data.assuntos %}
+                                    <option value="{{assunto.id}}">{{assunto.descricao}}</option>
+                                {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+           
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Entrada*</label>
+                                <input type="text"
+                                    name="entrada"
+                                    class="limpa form-control data entrada-0 required_terceiro"
+                                    placeholder="Informe a data e hora"
+                                    value="{% if data.registro.entrada is defined %}{{data.registro.entrada}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                                    <button tipe="button" class="insere__data btn-agora-entrada">Agora</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 saida-terceiro" style="display:none;">
+                            <div class="form-group">
+                                <label>Saída</label>
+                                <input type="text"
+                                    name="saida"
+                                    class="limpa form-control data saida-0"
+                                    placeholder="Informe a data e hora"
+                                    value="{% if data.saida.saida is defined %}{{data.saida.saida}}{% endif %}"
+                                    autofocus
+                                    maxlength="70"
+                                    />
+                                    <button tipe="button" class="insere__data">Agora</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12 acoes">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="button" class="adicionar_editar adicionar btn btn-success btn-salvar" data-loading-text="Aguarde...">
+                            <i class="fa fa-plus adicionar_editar_label"></i> Salvar
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light limpar">
+                        <i class="fa fa-times"></i> Limpar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="table-responsive">
+            <table class="table">
+            <thead>
+                <tr>
+                    <th>Pessoa</th>
+                    <th>Veículo</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                    <th>Tipo</th>
+                    <th width="90"></th>
+                </tr>
+            </thead>
+            <tbody class="listagem">
+                {% for row in data.resultado %}
+                    <tr>
+
+                        <td> 
+                            {% if row.tipo == 1 %}
+                                {{row.nome}}
+                            {% else %}
+                                {{row.pessoa}}  
+                            {% endif %}
+                        </td>
+                        <td> 
+                            {% if row.tipo == 1 %}
+                                {{row.veiculo_modelo}} - {{row.veiculo_placa}}
+                            {% else %}
+                                {{row.veiculo}} - {{row.placa}}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if row.entrada is not null %}
+                                {{row.entrada|date('d/m/Y H:i:s')}}</td>
+                            {% endif %}
+                        <td>
+                            {% if row.saida is not null %}
+                                {{row.saida|date('d/m/Y H:i:s')}}</td>
+                            {% endif %}
+                        <td>
+                            {% if row.tipo == '1' %}
+                                <span class="label label-success" title="Veículo Resfriar">Veículo Resfriar</span>
+                            {% else %}
+                                <span class="label label-warning" title="Terceiro">Terceiro</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-nowrap">
+
+                            {% if data.permissao.permissao > 2 and (data.usuario.id == 1 or data.usuario.id == 7) %}
+                                <a href="" data-toggle="tooltip" data-original-title="Editar" class="editar btn" 
+                                data-id="{{row.id}}"
+                                data-entrada="{{row.entrada|date('d/m/Y H:i:s')}}"
+                                data-saida="{{row.saida|date('d/m/Y H:i:s')}}"
+                                data-pessoa="{{row.pessoa}}"
+                                data-veiculo="{{row.veiculo}}"
+                                data-destino="{{row.destino}}"
+                                data-km-saida="{{row.km_saida}}"
+                                data-km-entrada="{{row.km_entrada}}"
+                                data-empresa="{{row.empresa}}"
+                                data-placa="{{row.placa}}"
+                                data-tipo="{{row.tipo}}"
+                                data-veiculo-id="{{row.veiculo_id}}"
+                                data-assunto-id="{{row.assunto_id}}"
+                                data-tfuncionario-id="{{row.tfuncionario_id}}"  >
+                                    <i class="fa fa-pencil text-inverse m-r-10" data-name="{{row.id}}" ></i>                                
+                                </a>
+                                <a href="javascript:void(0);"
+                                   class="btn-delete-modal"
+                                   data-id="{{row.id}}"
+                                   data-name="{{row.usuario}}"
+                                   data-toggle="tooltip"
+                                   data-original-title="Excluir">
+                                   <i class="fa fa-close text-danger m-r-10"></i>
+                                </a>
+                            {% endif %}
+                            {% if row.saida is null or row.entrada is null  %}
+                                <a href="" data-toggle="tooltip" data-original-title="Editar" class="editar btn btn-info" 
+                                data-id="{{row.id}}"
+                                data-entrada="{{row.entrada|date('d/m/Y H:i:s')}}"
+                                data-saida="{{row.saida|date('d/m/Y H:i:s')}}"
+                                data-pessoa="{{row.pessoa}}"
+                                data-veiculo="{{row.veiculo}}"
+                                data-destino="{{row.destino}}"
+                                data-km-saida="{{row.km_saida}}"
+                                data-km-entrada="{{row.km_entrada}}"
+                                data-empresa="{{row.empresa}}"
+                                data-placa="{{row.placa}}"
+                                data-tipo="{{row.tipo}}"
+                                data-veiculo-id="{{row.veiculo_id}}"
+                                data-assunto-id="{{row.assunto_id}}"
+                                data-tfuncionario-id="{{row.tfuncionario_id}}"  >
+                                    {% if row.saida is null %}
+                                        Registrar Saída
+                                    {% elseif row.entrada is null %}
+                                        Registrar Entrada
+                                    {% endif %}
+                                </a>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5" align="center">Nenhum registro encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+    {% if data.paginacao is defined and data.paginacao != null %}
+        <div class="row">
+            {% if data.paginacao.qtde != null %}
+                <div class="col-lg-4"><small>{{data.paginacao.qtde|raw}}</small></div>
+            {% endif %}
+            <div class="col-lg-8 text-align-right">{{data.paginacao.paginacao|raw}}</div>
+        </div>
+    {% endif %}
+
+    <div class="modal fade modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do Registro <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/{{data.modulo.url}}" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

@@ -1,0 +1,239 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-usuario"  enctype="multipart/form-data">
+
+           
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Usuário</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Nome*</label>
+                            <input type="text" name="nome" class="form-control" placeholder="Informe o nome" value="{% if data.registro.nome is defined %}{{data.registro.nome}}{% endif %}" data-myrules="required" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label>Usuário*</label>
+                            <input type="text" name="usuario" class="form-control" placeholder="Informe o usuário" value="{% if data.registro.usuario is defined %}{{data.registro.usuario}}{% endif %}" data-myrules="required">
+                        </div>
+                        <div class="form-group">
+                            <label>Status*</label>
+                            <select name="situacao" class="form-control" data-myrules="required">
+                                <option value="ativo" {% if data.registro.situacao is defined and data.registro.situacao == 'ativo' %} selected="selected" {% endif %}>Ativo</option>
+                                <option value="inativo" {% if data.registro.situacao is defined and data.registro.situacao == 'inativo' %} selected="selected" {% endif %}>Inativo</option>
+                            </select>
+                        </div>
+                        {% if data.exibe_usuario_erp == 'Sim' %}
+                        <div class="form-group">
+                            <label>Usuário ERP*</label>
+                            <select name="usuario_erp_id" class="form-control" data-myrules="required">
+                                <option></option>
+                                {% for usuario in data.usuarios_erp %}
+                                    <option value="{{usuario.ID}}" {% if data.registro.usuario_erp_id is defined and data.registro.usuario_erp_id == usuario.ID %} selected="selected" {% endif %}>{{usuario.LOGIN}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+                       
+                        <div class="form-group div-cliente" style="display:none;">
+                            <label>Cliente ERP</label>
+                            <select name="cliente_erp" class="form-control" id="select-cliente" >
+                                {% if data.registro.cliente_erp_id is defined %}
+                                    <option value="{{data.registro.cliente_erp_id}}#{{data.registro.cliente_erp_cod_cli}}#{{data.registro.cliente_erp_descricao|trim}}">
+                                        {{data.registro.cliente_erp_cod_cli}} - {{data.registro.cliente_erp_descricao}}
+                                    </option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Empresa Padrão*</label>
+                            <select name="empresa_id" class="form-control" data-myrules="required">
+                                {% for empr in data.empresas %}
+                                    <option value="{{empr.id}}" {% if data.registro.empresa_id is defined and data.registro.empresa_id == empr.id %} selected="selected" {% endif %}>{{empr.nome_fantasia}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Unidade</label>
+                            <select name="company_id" class="form-control unidade">
+                                {% if data.companies is defined %}
+                                    <option></option>
+                                    {% for company in data.companies %}
+                                        <option value="{{company.id}}" {% if data.registro.company_id is defined and data.registro.company_id == company.id %} selected="selected" {% endif %}>
+                                            {{company.name}}
+                                        </option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>E-mail*</label>
+                            <input type="text" name="email" class="form-control" placeholder="Informe o e-mail" value="{% if data.registro.email is defined %}{{data.registro.email}}{% endif %}" data-myrules="required|email">
+                        </div>
+                        <div class="form-group">
+                            <label>Senha*</label>
+                            <input type="password" name="senha" class="form-control" placeholder="Informe a senha" data-myrules="{% if data.registro.id is not defined %}required{% endif %}" />
+                            <small><input type="checkbox" name="ad" class="check_ad" {% if data.registro.ad is defined and data.registro.ad == 1 %} value="{{data.registro.ad}}" {% else %} value="0" {% endif %} /><b> Utiliza credenciais do Active Directory </b></small> 
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo*</label>
+                            <select name="tipo" class="form-control" id="tipo" data-myrules="required">
+                                <option value="user" {% if data.registro.tipo is defined and data.registro.tipo == 'user' %} selected="selected" {% endif %}>Usuário</option>
+                                <option value="admin" {% if data.registro.tipo is defined and data.registro.tipo == 'admin' %} selected="selected" {% endif %}>Administrador</option>
+                                <option value="ate" {% if data.registro.tipo is defined and data.registro.tipo == 'ate' %} selected="selected" {% endif %}>Assistência Técnica Externa</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Setor</label>
+                            <select name="setor_id" class="form-control setor">
+                                <option></option>
+                                {% for setor in data.setores %}
+                                    <option value="{{setor.id}}" {% if data.registro.setor_id is defined and data.registro.setor_id == setor.id %} selected="selected" {% endif %}>{{setor.setor}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Perfil</label>
+                            <select name="perfil_id" class="form-control">
+                                <option></option>
+                                {% for perfil in data.perfis %}
+                                    <option value="{{perfil.id}}" {% if data.registro.perfil_id is defined and data.registro.perfil_id == perfil.id %} selected="selected" {% endif %}>{{perfil.perfil}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if data.registro.id is defined and data.registro.perfil_id is null %}
+            <div class="card card-outline-info">
+                <div class="card-header">
+                    <h4 class="m-b-0 text-white">Permissões</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        {{data.permissions|raw}}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+
+        {% if data.registro.id is defined and data.registro.tipo == 'ate' %}
+
+
+            <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Contrato</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mt-1">
+                    <div class="col-md-12">
+                        <div class="form-group">
+
+                            <div class="form-group">
+                                <input id="upload" type="file" name="files[]" multiple>
+                            </div>
+
+                            {% if data.registro.arquivos is defined and data.registro.arquivos != null %}
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th width="80%">Arquivo</th>
+                                                    <th width="20%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for file in data.registro.arquivos %}
+                                                    <tr>
+                                                        <td>{{file.arquivo}}</td>
+                                                        <td align="right">
+                                                            <a href="/usuarios/arquivos/download/{{file.link}}" target="_blank" class="btn btn-default btn-xs" title="Download"><i class="fa fa-download"></i></a>
+                                                            <a href="javascript:void(0);" class="btn-delete-file-modal" data-id="{{file.id}}" data-name="{{file.arquivo}}" title="Excluir" data-toggle="tooltip" data-original-title="Excluir"><i class="fa fa-close text-danger m-r-10"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                {% else %}
+                                                    <tr><td colspan="5" align="center">Nenhum arquivo.</td></tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card card-body" style="margin-bottom: 40px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <div class="modal fade modal-delete-arquivo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Confirma a exclusão do Arquivo <strong></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="/auxiliares/usuarios/apagar-arquivo" method="post">
+                        <input type="hidden" name="_METHOD" value="DELETE"/>
+                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="registro_id" value="{{data.registro.id}}">
+                        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-submit-modal btn-success" data-loading-text="Excluindo...">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

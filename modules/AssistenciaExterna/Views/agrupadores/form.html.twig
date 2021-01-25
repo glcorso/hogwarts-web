@@ -1,0 +1,155 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+    {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    <form action="{% if data.permissao.permissao > 1 %} /{{data.modulo.url}} {% else %} javascript:void(0); {% endif %}" method="post" role="form" class="form-usuario">
+
+
+        <div class="card card-outline-info" style="margin-bottom:10px;">
+            <div class="card-header">
+                <h4 class="m-b-0 text-white">Agrupador de Itens</h4>
+            </div>
+            <div class="card-body">
+
+                <input type="hidden" name="voltar" value="{{data.voltar}}">
+
+                {% if data.registro.id is defined %}
+                    <input type="hidden" name="id" value="{{data.registro.id}}">
+                    <input type="hidden" name="_METHOD" value="PUT"/>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Descrição*</label>
+                            <input type="text"
+                                name="descricao"
+                                class="form-control"
+                                placeholder="Informe a Descrição"
+                                value="{% if data.registro.descricao is defined %}{{data.registro.descricao}}{% endif %}"
+                                required
+                                maxlength="70"
+                                autofocus />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label>Situação*</label>
+                            <select name="sit" class="form-control" required>
+                                <option value="1" {% if data.registro.sit is defined and data.registro.sit == '1' %} selected="selected" {% endif %}>Ativo</option>
+                                <option value="0" {% if data.registro.sit is defined and data.registro.sit == '0' %} selected="selected" {% endif %}>Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <div class="col-lg-12">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th width="90%">Item</th>
+                                <th width="10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for index, item in data.registro.AgrupadorItem %}
+                                <tr data-index="{{index}}">
+                                    <td>
+                                        <select name="itens[{{index}}][item_id]" class="form-control" id="select-item-{{index}}" required>
+                                            {% if item.Item is defined %}
+                                            <option value="{{item.Item.id}}">
+                                                {{item.Item.cod_item}} - {{item.Item.desc_tecnica}}
+                                            </option>
+                                            {% endif %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0);"
+                                           class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr data-index="0">
+                                    <td>
+                                        <select name="itens[0][item_id]" class="form-control" id="select-item-0" required>
+                                            <option value="">Selecione um Item</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0);"
+                                            class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-right">
+                                    <a href="javascript:void(0);" class="btn btn-success btn-adicionar-linha align-self-center p-2"><i class="fa fa-plus"></i> Adicionar </a>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card card-body" style="margin-top: -20px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    {% if data.permissao.permissao > 1 %}
+                        <button type="submit" class="btn btn-success btn-submit" data-loading-text="Aguarde...">
+                            <i class="fa fa-check"></i>{% if data.registro.id is defined %} Editar {% else %} Adicionar {% endif %}
+                        </button>
+                    {% endif %}
+                    <a href="{{data.voltar}}" class="btn btn-inverse waves-effect waves-light">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript">
+        var vid = '{{data.registro.id}}';
+    </script>
+    <script id="novoItem" type="text/template">
+        <tr data-index="@index">
+            <td>
+                <select name="itens[@index][item_id]" class="form-control" id="select-item-@index">
+                    <option value="">Selecione um Item</option>
+                </select>
+            </td>
+            <td>
+                <a href="javascript:void(0);"
+                    class="btn btn-xs btn-danger btn-remover-linha align-self-center p-2">
+                    <i class="fa fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+    </script>
+{% endblock %}

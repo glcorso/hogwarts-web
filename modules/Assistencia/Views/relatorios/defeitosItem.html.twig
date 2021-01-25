@@ -1,0 +1,126 @@
+{% extends 'baseLogged.html.twig' %}
+
+{% block stylesheets %}
+  {{parent()}}
+{% endblock %}
+
+{% block breadcrumb %}
+    {% include 'breadcrumb.html.twig' with {'modulos': data.modulo} %}
+{% endblock %}
+
+{% block principal %}
+
+    {% if flash.error is defined %}
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.error|raw}}
+        </div>
+    {% endif %}
+
+    {% if flash.success is defined %}
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{flash.success|raw}}
+        </div>
+    {% endif %}
+
+
+    <div class="btn-table-up ">
+        <div class="row">
+            <div class="col-lg-12 mb-1">
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Filtros <span class="caret"></span>
+                    </button>
+                     <button type="button" class="btn btn-info btn-imprimir-rel-def ml-1" >
+                        <i class="fa fa-print"></i> Imprimir
+                    </button>
+                    <div class="dropdown-menu animated" style="width: 540px; padding: 15px;">
+                        <form action="/{{data.modulo.url}}" method="get" role="form" class="form-filtro">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Data Recebimento</label>
+                                    <input type="text" name="data_recebimento" class="form-control" value="{% if data.filtros.data_recebimento is defined %}{{data.filtros.data_recebimento}}{% endif %}">
+                                    <small>Para utilizar intervalos, utilize o formato dd/mm/yyyy|dd/mm/yyyy</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="filter-col" for="pref-search">Defeito</label>
+                                    <select name="defeito_principal_id" id="select-defeito"  class="form-control">
+                                        {% if data.filtros.defeito_principal_id is defined %}
+                                            <option value="{{data.filtros.defeito_principal_id}}">
+                                                {{data.filtrado.cod_defeito}} - {{data.filtrado.descricao_defeito}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                {#<div class="form-group">
+                                    <label class="filter-col" for="pref-search">Produto</label>
+                                    <select name="item_id" id="select-item" class="form-control" >
+                                        {% if data.filtros.item_id is defined %}
+                                            <option value="{{data.filtros.item_id}}">
+                                                {{data.filtrado.cod_item}} - {{data.filtrado.desc_tecnica}}
+                                            </option>
+                                        {% endif %}
+                                    </select>
+                                </div>#}
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-success btn-filtrar-rel-def" value="Filtrar">
+                                    <a href="javascript:void(0);" class="btn btn-inverse waves-effect waves-light btn-limpar-filtro">Limpar Filtros</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="40%" style="background-color:#00000029;">Defeito</th>
+                            {% set total_itens = 0 %}
+                            {% for item in data.itens %}
+                                    {% set total_itens = total_itens + 1 %}
+                                <th width="10%" style="background-color:#00000029;">{{item.cod_item}}</th>
+                            {% endfor %}
+                            <th style="background-color:#00000029;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set total_geral = 0 %}
+                        {% for defeito in data.estrutura.defeitos %}
+                            <tr>
+                                {% set total_linha = 0 %}
+                                <td style="background-color:#00000029;">{{defeito.desc_defeito_tecnico}}</td> 
+                                {% for item in defeito.itens %}
+                                    <td class="text-center">{{item.quantidade}}</td>
+                                 {% set total_linha = item.quantidade + total_linha %}
+                                {% endfor %}
+                                <td style="background-color:#00000029;">{{total_linha}}</td>
+                                {% set total_geral = total_geral + total_linha %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="{{total_itens+1}}">Total Geral: </td>
+                            <td>{{total_geral}}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+{% endblock %}

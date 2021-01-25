@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title> Portal de Chamados {% block title %}{% endblock %}</title>
+
+{% block meta %}
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+    <link href="/stylesheets/print.css" rel="stylesheet" type="text/css">
+    <link href="/images/favicon.ico" rel="shortcut icon">
+{% endblock %}
+
+</head>
+<body>
+
+    <table border="0" width="700" style="margin-bottom: 30px;">
+        <tr>
+            <td><img src="/images/logo.png" width="120"></td>
+            <td align="center"><h4>Recibo de Pagamento de Despesas</h4></td>
+            <td align="right">{{ "now"|date("d/m/Y") }}<br>{{ "now"|date("H:i") }}</td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <strong>Consultor: </strong>{{user.name}}
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="3">
+                <table width="100%" style="margin-top: 20px;">
+                    <tr style="border-bottom: solid 2px #ccc;">
+                        <th width="90">Data</th>
+                        <th width="60">Nro</th>
+                        <th width="120">Tipo</th>
+                        <th>Descrição</th>
+                        <th width="90">Valor</th>
+                    </tr>
+                    {% for expense in expenses %}
+                        <tr style="border-bottom: solid 1px #ccc">
+                            <td>{{expense.date_br}}</td>
+                            <td>{{expense.ticket_id}}</td>
+                            <td>{{expense.expense_name}}</td>
+                            <td>{{expense.description|raw}}</td>
+                            <td>{{expense.value}}</td>
+                        </tr>
+                        <tr><td height="5"></td></tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="4"></td>
+                        <td><strong>{{total}}</strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <table width="100%" style="margin-top: 20px;">
+                    <tr>
+                        <td width="60%">
+                            __________________________________<br><strong>{{user.name}}</strong>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <hr></hr>
+
+    <table border="0" width="700" style="margin-top: 30px;">
+        <tr>
+            <td><img src="/images/logo.png" width="120"></td>
+            <td align="center"><h4>Recibo de Pagamento de Despesas</h4></td>
+            <td align="right">{{ "now"|date("d/m/Y") }}<br>{{ "now"|date("H:i") }}</td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <strong>Consultor: </strong>{{user.name}}
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="3">
+                <table width="100%" style="margin-top: 20px;">
+                    <tr style="border-bottom: solid 2px #ccc;">
+                        <th width="90">Data</th>
+                        <th width="60">Nro</th>
+                        <th width="120">Tipo</th>
+                        <th>Descrição</th>
+                        <th width="90">Valor</th>
+                    </tr>
+                    {% for expense in expenses %}
+                        <tr style="border-bottom: solid 1px #ccc">
+                            <td>{{expense.date_br}}</td>
+                            <td>{{expense.ticket_id}}</td>
+                            <td>{{expense.expense_name}}</td>
+                            <td>{{expense.description|raw}}</td>
+                            <td>{{expense.value}}</td>
+                        </tr>
+                        <tr><td height="5"></td></tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="4"></td>
+                        <td><strong>{{total}}</strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <table width="100%" style="margin-top: 20px;">
+                    <tr>
+                        <td width="60%">
+                            __________________________________<br><strong>{{user.name}}</strong>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
